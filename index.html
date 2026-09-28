@@ -19,6 +19,9 @@
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 
 <style>
+/* ===================================================================
+   ROOT VARIABLES — Dark (default) + Light theme
+   =================================================================== */
 * { margin:0; padding:0; box-sizing:border-box; }
 
 :root{
@@ -31,6 +34,22 @@
   --muted:#7d8590;
   --border:rgba(0,255,157,.15);
   --card:rgba(15,21,36,.6);
+  --shadow-accent:rgba(0,255,157,.15);
+  --matrix-opacity:.13;
+}
+
+body.light-theme{
+  --bg:#f5f7fa;
+  --bg2:#ffffff;
+  --fg:#0a0e1a;
+  --accent:#00a86b;
+  --accent2:#0088cc;
+  --accent3:#e63946;
+  --muted:#5a6470;
+  --border:rgba(0,168,107,.2);
+  --card:rgba(255,255,255,.85);
+  --shadow-accent:rgba(0,168,107,.2);
+  --matrix-opacity:.05;
 }
 
 html { scroll-behavior:smooth; }
@@ -41,6 +60,7 @@ body {
   font-family:'Space Grotesk',sans-serif;
   overflow-x:hidden;
   cursor:none;
+  transition:background .4s, color .4s;
 }
 
 body.reduced-motion * {
@@ -48,34 +68,29 @@ body.reduced-motion * {
   transition-duration:0.01ms !important;
 }
 
-/* ===== GLOBAL TEXT OVERFLOW FIX ===== */
-* {
-  overflow-wrap:break-word;
-  word-wrap:break-word;
-}
-p, li, h1, h2, h3, h4, h5, h6, span, div, a {
-  overflow-wrap:break-word;
-  word-wrap:break-word;
-}
-.term-line {
-  white-space:normal !important;
-  overflow-wrap:break-word !important;
-  word-break:break-word;
-}
+body.modal-open { overflow:hidden; }
 
+* { overflow-wrap:break-word; word-wrap:break-word; }
+.term-line { white-space:normal !important; }
+
+/* ===================================================================
+   BACKGROUND LAYERS
+   =================================================================== */
 #matrix-canvas{
   position:fixed; top:0; left:0;
   width:100%; height:100%;
   z-index:-2;
-  opacity:.13;
+  opacity:var(--matrix-opacity);
+  transition:opacity .4s;
 }
 .grid-overlay{
   position:fixed; inset:0;
   z-index:-1;
   background-image:
-    linear-gradient(rgba(0,255,157,.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(0,255,157,.035) 1px, transparent 1px);
+    linear-gradient(var(--border) 1px, transparent 1px),
+    linear-gradient(90deg, var(--border) 1px, transparent 1px);
   background-size:55px 55px;
+  opacity:.25;
   pointer-events:none;
 }
 
@@ -108,6 +123,9 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   50%{ transform:translate(-80px,-60px); }
 }
 
+/* ===================================================================
+   PRELOADER
+   =================================================================== */
 .preloader{
   position:fixed; inset:0;
   background:var(--bg);
@@ -120,11 +138,11 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
 .preloader.hide{ opacity:0; visibility:hidden; }
 .terminal-loader{
   width:min(560px,92vw);
-  background:rgba(15,21,36,.95);
+  background:var(--bg2);
   border:1px solid var(--border);
   border-radius:10px;
   overflow:hidden;
-  box-shadow:0 0 80px rgba(0,255,157,.2);
+  box-shadow:0 0 80px var(--shadow-accent);
 }
 .terminal-header{
   padding:.6rem 1rem;
@@ -165,11 +183,14 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 @keyframes blink{ 50%{ opacity:0; } }
 
+/* ===================================================================
+   CUSTOM CURSOR
+   =================================================================== */
 .cursor,.cursor-follower{
   position:fixed; top:0; left:0;
   border-radius:50%;
   pointer-events:none;
-  z-index:10000;
+  z-index:30000;
   transform:translate(-50%,-50%);
 }
 .cursor{
@@ -187,22 +208,27 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   background:rgba(0,255,157,.1);
 }
 
+/* ===================================================================
+   NAV
+   =================================================================== */
 .nav{
   position:fixed; top:0; left:0; right:0;
   padding:1.2rem 4rem;
   display:flex; justify-content:space-between; align-items:center;
   z-index:100;
   backdrop-filter:blur(12px);
-  background:rgba(10,14,26,.75);
+  background:color-mix(in srgb, var(--bg) 75%, transparent);
   border-bottom:1px solid var(--border);
   font-family:'JetBrains Mono',monospace;
   gap:1rem;
   flex-wrap:wrap;
+  transition:background .4s;
 }
 .logo{
   font-weight:700; font-size:1.05rem;
   display:flex; align-items:center; gap:.5rem;
   white-space:nowrap;
+  color:var(--fg);
 }
 .logo::before{
   content:'>';
@@ -241,7 +267,14 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   background:rgba(0,255,157,.15);
   border-color:var(--accent);
 }
+.icon-btn.active{
+  background:var(--accent);
+  color:var(--bg);
+}
 
+/* ===================================================================
+   BUTTONS
+   =================================================================== */
 .btn{
   display:inline-flex; align-items:center; gap:.5rem;
   padding:.9rem 1.8rem;
@@ -262,7 +295,7 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
 }
 .btn.primary:hover{
   transform:translateY(-3px);
-  box-shadow:0 15px 40px rgba(0,255,157,.4);
+  box-shadow:0 15px 40px var(--shadow-accent);
 }
 .btn.secondary{
   border:1px solid var(--border);
@@ -274,6 +307,9 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   border-color:var(--accent);
 }
 
+/* ===================================================================
+   HERO
+   =================================================================== */
 .hero{
   min-height:100vh;
   padding:6rem 4rem 4rem;
@@ -306,7 +342,6 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   0%,100%{ opacity:1; transform:scale(1); }
   50%{ opacity:.5; transform:scale(1.3); }
 }
-
 .hero-title{
   font-family:'Syne',sans-serif;
   font-size:clamp(1.8rem,4.5vw,3.8rem);
@@ -320,9 +355,7 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   from{ opacity:0; transform:translateY(30px); }
   to{ opacity:1; transform:translateY(0); }
 }
-.hero-title .line{ 
-  display:block;
-}
+.hero-title .line{ display:block; }
 .hero-title .line.gradient-text{
   background:linear-gradient(90deg,var(--accent),var(--accent2));
   -webkit-background-clip:text;
@@ -343,6 +376,7 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
 .hero-desc .cmd{ color:var(--accent2); }
 .hero-btns{ display:flex; gap:1rem; flex-wrap:wrap; }
 
+/* Terminal Hero */
 .hero-terminal{
   flex:1;
   min-width:320px;
@@ -350,13 +384,13 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   perspective:1200px;
 }
 .terminal-window{
-  background:rgba(15,21,36,.95);
+  background:var(--bg2);
   border:1px solid var(--border);
   border-radius:10px;
   overflow:hidden;
   box-shadow:
     0 30px 80px rgba(0,0,0,.5),
-    0 0 60px rgba(0,255,157,.12);
+    0 0 60px var(--shadow-accent);
   transform:rotateY(-5deg) rotateX(2deg);
   transition:transform .5s;
 }
@@ -381,24 +415,73 @@ p, li, h1, h2, h3, h4, h5, h6, span, div, a {
   font-family:'JetBrains Mono',monospace;
   font-size:.78rem;
   line-height:1.9;
-  height:400px;
+  height:420px;
   overflow-y:auto;
   overflow-x:hidden;
   color:#b8c1cc;
 }
-.term-line{ 
+body.light-theme .term-body{ color:#444; }
+.term-line{
   white-space:normal;
   overflow-wrap:break-word;
   word-break:break-word;
-  padding-left:1.5rem;
-  text-indent:-1.5rem;
 }
 .term-line .user{ color:var(--accent); }
 .term-line .path{ color:var(--accent2); }
-.term-line .cmd{ color:#fff; }
+.term-line .cmd{ color:var(--fg); }
 .term-line .ok{ color:var(--accent); }
 .term-line .warn{ color:#ffbd2e; }
+.term-line .comment{ color:var(--muted); font-style:italic; }
 
+/* Interactive input */
+.term-input-line{
+  display:flex;
+  flex-wrap:nowrap;
+  align-items:center;
+  gap:0;
+  width:100%;
+}
+.prompt-text{
+  flex-shrink:0;
+  white-space:nowrap;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  line-height:1.9;
+}
+.prompt-text .user{ color:var(--accent); }
+.prompt-text .path{ color:var(--accent2); }
+.prompt-text .ps{ color:var(--muted); }
+
+#termInput{
+  flex:1;
+  min-width:20px;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--fg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  line-height:1.9;
+  padding:0;
+  margin-left:.5em;
+  caret-color:var(--accent);
+  cursor:auto !important;
+}
+#termInput::placeholder{ color:var(--muted); opacity:.5; }
+
+.term-body .history-line .user{ color:var(--accent); }
+.term-body .history-line .path{ color:var(--accent2); }
+.term-body .history-line .ps{ color:var(--muted); }
+.term-body .history-line .cmd-text{ color:var(--fg); }
+.term-body .output-line{ color:#b8c1cc; }
+body.light-theme .term-body .output-line{ color:#444; }
+.term-body .output-line.ok{ color:var(--accent); }
+.term-body .output-line.warn{ color:#ffbd2e; }
+.term-body .output-line.err{ color:var(--accent3); }
+
+/* ===================================================================
+   SECTIONS — common
+   =================================================================== */
 section{ padding:7rem 4rem; position:relative; }
 .container{ max-width:1200px; margin:0 auto; }
 .section-label{
@@ -415,9 +498,12 @@ section{ padding:7rem 4rem; position:relative; }
   line-height:1.15;
   margin-bottom:3.5rem;
   max-width:800px;
+  color:var(--fg);
 }
 
-/* ===== ABOUT with PHOTO ===== */
+/* ===================================================================
+   ABOUT
+   =================================================================== */
 .about-grid{
   display:grid;
   grid-template-columns:auto 1fr;
@@ -434,29 +520,20 @@ section{ padding:7rem 4rem; position:relative; }
   position:relative;
   background:linear-gradient(135deg,var(--accent),var(--accent2));
   box-shadow:
-    0 0 0 4px rgba(0,255,157,.15),
-    0 0 60px rgba(0,255,157,.35);
+    0 0 0 4px var(--shadow-accent),
+    0 0 60px var(--shadow-accent);
   animation:avatarGlow 3s infinite alternate;
   flex-shrink:0;
 }
 .avatar img{
-  width:100%;
-  height:100%;
+  width:100%; height:100%;
   object-fit:cover;
   object-position:center top;
   display:block;
 }
-.avatar::after{
-  content:'';
-  position:absolute;
-  inset:0;
-  border-radius:50%;
-  box-shadow:inset 0 0 30px rgba(0,255,157,.15);
-  pointer-events:none;
-}
 @keyframes avatarGlow{
-  from{ box-shadow:0 0 0 4px rgba(0,255,157,.15), 0 0 60px rgba(0,255,157,.35); }
-  to  { box-shadow:0 0 0 4px rgba(0,255,157,.25), 0 0 90px rgba(0,255,157,.55); }
+  from{ box-shadow:0 0 0 4px var(--shadow-accent), 0 0 60px var(--shadow-accent); }
+  to  { box-shadow:0 0 0 4px var(--shadow-accent), 0 0 90px var(--shadow-accent); }
 }
 .avatar-badge{
   font-family:'JetBrains Mono',monospace;
@@ -470,11 +547,86 @@ section{ padding:7rem 4rem; position:relative; }
   white-space:nowrap;
 }
 .about-text p{
-  color:#b8c1cc; font-size:1rem;
+  color:var(--muted); font-size:1rem;
   line-height:1.9; margin-bottom:1.3rem;
 }
 .about-text p strong{ color:var(--accent); }
 
+/* ===================================================================
+   CURRENTLY WORKING ON
+   =================================================================== */
+.current-status{
+  margin-top:3rem;
+  padding:1.8rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  position:relative;
+  overflow:hidden;
+}
+.current-status::before{
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  animation:statusBar 3s ease-in-out infinite;
+}
+@keyframes statusBar{
+  0%,100%{ opacity:1; }
+  50%{ opacity:.5; }
+}
+.current-status .cs-header{
+  display:flex;
+  align-items:center;
+  gap:.6rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;
+  color:var(--accent);
+  letter-spacing:.15em;
+  margin-bottom:1.2rem;
+}
+.current-status .cs-header .live-dot{
+  width:8px; height:8px;
+  border-radius:50%;
+  background:var(--accent);
+  box-shadow:0 0 10px var(--accent);
+  animation:pulse 1.5s infinite;
+}
+.cs-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));
+  gap:1.5rem;
+}
+.cs-item{
+  padding:1rem 1.2rem;
+  background:rgba(0,255,157,.04);
+  border:1px solid var(--border);
+  border-radius:10px;
+  transition:all .3s;
+}
+.cs-item:hover{
+  border-color:var(--accent);
+  transform:translateY(-3px);
+}
+.cs-item .cs-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  color:var(--muted);
+  letter-spacing:.1em;
+  margin-bottom:.5rem;
+}
+.cs-item .cs-value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  color:var(--fg);
+  line-height:1.6;
+}
+.cs-item .cs-value .highlight{ color:var(--accent); }
+
+/* ===================================================================
+   STATS
+   =================================================================== */
 .stats-grid{
   display:grid; grid-template-columns:repeat(4,1fr); gap:1.5rem;
   margin-top:3.5rem;
@@ -490,7 +642,7 @@ section{ padding:7rem 4rem; position:relative; }
 .stat-card:hover{
   border-color:var(--accent);
   transform:translateY(-5px);
-  box-shadow:0 20px 50px rgba(0,255,157,.15);
+  box-shadow:0 20px 50px var(--shadow-accent);
 }
 .stat-card h3{
   font-family:'JetBrains Mono',monospace;
@@ -506,6 +658,9 @@ section{ padding:7rem 4rem; position:relative; }
   letter-spacing:.12em;
 }
 
+/* ===================================================================
+   SKILLS
+   =================================================================== */
 .skills-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
@@ -534,7 +689,7 @@ section{ padding:7rem 4rem; position:relative; }
 .skill-category:hover{
   transform:translateY(-6px);
   border-color:var(--accent);
-  box-shadow:0 25px 60px rgba(0,255,157,.12);
+  box-shadow:0 25px 60px var(--shadow-accent);
 }
 .skill-category h4{
   font-family:'JetBrains Mono',monospace;
@@ -557,10 +712,13 @@ section{ padding:7rem 4rem; position:relative; }
 }
 .skill-tag:hover{
   background:var(--accent);
-  color:#000;
+  color:var(--bg);
   transform:translateY(-2px);
 }
 
+/* ===================================================================
+   PROJECTS
+   =================================================================== */
 .projects-grid{
   display:grid;
   grid-template-columns:1fr;
@@ -589,7 +747,7 @@ section{ padding:7rem 4rem; position:relative; }
 .project-card:hover{
   transform:translateX(8px);
   border-color:var(--accent);
-  box-shadow:0 25px 60px rgba(0,255,157,.15);
+  box-shadow:0 25px 60px var(--shadow-accent);
 }
 .project-header{
   display:flex; justify-content:space-between;
@@ -610,11 +768,16 @@ section{ padding:7rem 4rem; position:relative; }
   font-size:1.4rem;
   font-weight:700;
   margin-bottom:.3rem;
+  color:var(--fg);
 }
 .project-type{
   font-family:'JetBrains Mono',monospace;
   font-size:.72rem;
   color:var(--accent2);
+}
+.project-actions{
+  display:flex; gap:.5rem; align-items:center;
+  flex-wrap:wrap;
 }
 .project-link{
   font-family:'JetBrains Mono',monospace;
@@ -630,11 +793,28 @@ section{ padding:7rem 4rem; position:relative; }
 }
 .project-link:hover{
   background:var(--accent);
-  color:#000;
+  color:var(--bg);
   border-color:var(--accent);
 }
+.project-details-btn{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;
+  color:#000;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+  padding:.5rem 1rem;
+  border:none;
+  border-radius:6px;
+  cursor:none;
+  transition:all .3s;
+  white-space:nowrap;
+  font-weight:700;
+}
+.project-details-btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 25px var(--shadow-accent);
+}
 .project-desc{
-  color:#b8c1cc;
+  color:var(--muted);
   font-size:.95rem;
   line-height:1.8;
   margin-bottom:1.2rem;
@@ -669,7 +849,7 @@ section{ padding:7rem 4rem; position:relative; }
 .project-highlights li{
   list-style:none;
   font-size:.88rem;
-  color:#b8c1cc;
+  color:var(--muted);
   padding-left:1.5rem;
   position:relative;
   line-height:1.6;
@@ -692,6 +872,392 @@ section{ padding:7rem 4rem; position:relative; }
   background:rgba(0,184,255,.04);
 }
 
+/* ===================================================================
+   PROJECT MODAL
+   =================================================================== */
+.project-modal{
+  position:fixed; inset:0;
+  z-index:20000;
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding:2rem;
+  overflow-y:auto;
+  background:rgba(5,8,15,.92);
+  backdrop-filter:blur(10px);
+  opacity:0;
+  transition:opacity .35s ease;
+}
+.project-modal.show{ display:flex; opacity:1; }
+.project-modal-inner{
+  width:100%;
+  max-width:1000px;
+  margin:auto;
+  transform:translateY(30px);
+  transition:transform .4s cubic-bezier(.19,1,.22,1);
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:16px;
+  overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6), 0 0 80px var(--shadow-accent);
+}
+.project-modal.show .project-modal-inner{ transform:translateY(0); }
+
+.modal-toolbar{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  padding:1rem 1.5rem;
+  background:var(--bg2);
+  border-bottom:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace;
+  flex-wrap:wrap;
+}
+.modal-toolbar-title{
+  color:var(--accent);
+  font-size:.85rem;
+  display:flex; align-items:center; gap:.5rem;
+}
+.modal-toolbar-title::before{ content:'📁'; }
+.modal-toolbar-actions{ display:flex; gap:.5rem; flex-wrap:wrap; }
+.toolbar-btn{
+  display:inline-flex; align-items:center; gap:.4rem;
+  padding:.5rem 1rem;
+  border-radius:6px;
+  border:1px solid var(--border);
+  background:rgba(0,255,157,.05);
+  color:var(--accent);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  cursor:none;
+  transition:all .3s;
+  text-decoration:none;
+}
+.toolbar-btn:hover{
+  background:rgba(0,255,157,.15);
+  border-color:var(--accent);
+}
+.toolbar-btn.close-btn{
+  background:rgba(255,107,107,.08);
+  color:var(--accent3);
+  border-color:rgba(255,107,107,.25);
+}
+.toolbar-btn.close-btn:hover{
+  background:rgba(255,107,107,.2);
+  border-color:var(--accent3);
+}
+
+.modal-content{ padding:2.5rem; }
+.modal-hero{
+  padding-bottom:1.5rem;
+  margin-bottom:2rem;
+  border-bottom:1px dashed var(--border);
+}
+.modal-hero h2{
+  font-family:'Syne',sans-serif;
+  font-size:2rem;
+  font-weight:800;
+  margin-bottom:.5rem;
+  line-height:1.2;
+  color:var(--fg);
+}
+.modal-hero .modal-subtitle{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  color:var(--accent2);
+  margin-bottom:1rem;
+}
+.modal-hero .modal-tags{ display:flex; gap:.5rem; flex-wrap:wrap; }
+.modal-hero .modal-tags span{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;
+  padding:.3rem .8rem;
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--accent2);
+  background:rgba(0,184,255,.04);
+}
+.modal-section{ margin-bottom:2rem; }
+.modal-section h3{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.95rem;
+  color:var(--accent);
+  letter-spacing:.12em;
+  margin-bottom:1rem;
+  display:flex;
+  align-items:center;
+  gap:.5rem;
+}
+.modal-section h3::before{ content:'$'; color:var(--accent2); }
+.modal-section p{
+  color:var(--muted);
+  font-size:.95rem;
+  line-height:1.8;
+  margin-bottom:1rem;
+}
+.modal-section ul{ list-style:none; padding:0; }
+.modal-section ul li{
+  position:relative;
+  padding-left:1.5rem;
+  font-size:.92rem;
+  color:var(--muted);
+  line-height:1.7;
+  margin-bottom:.6rem;
+}
+.modal-section ul li::before{
+  content:'▸';
+  position:absolute;
+  left:0;
+  color:var(--accent);
+  font-weight:700;
+}
+.modal-section code{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  background:rgba(0,255,157,.08);
+  color:var(--accent);
+  padding:.15rem .5rem;
+  border-radius:4px;
+}
+.modal-screenshots{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
+  gap:1rem;
+  margin-top:1rem;
+}
+.screenshot-item{
+  aspect-ratio:16/10;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+  background:linear-gradient(135deg, rgba(0,255,157,.06), rgba(0,184,255,.06));
+  transition:all .3s;
+  position:relative;
+}
+.screenshot-item:hover{
+  border-color:var(--accent);
+  transform:scale(1.02);
+  box-shadow:0 15px 40px var(--shadow-accent);
+}
+.screenshot-item img{
+  width:100%; height:100%;
+  object-fit:cover;
+  display:block;
+}
+.screenshot-item .placeholder{
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:.5rem;
+  color:var(--muted);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.78rem;
+  text-align:center;
+  padding:1rem;
+}
+.screenshot-item .placeholder .icon{ font-size:2rem; opacity:.5; }
+.modal-metrics-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+  gap:1rem;
+  margin-bottom:2rem;
+}
+.modal-metric{
+  padding:1.2rem;
+  background:rgba(0,255,157,.04);
+  border:1px solid var(--border);
+  border-radius:10px;
+  text-align:center;
+}
+.modal-metric .value{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1.8rem;
+  color:var(--accent);
+  font-weight:700;
+  line-height:1;
+  margin-bottom:.4rem;
+}
+.modal-metric .label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  color:var(--muted);
+  letter-spacing:.1em;
+}
+.modal-arch{
+  background:rgba(10,14,26,.6);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:1.5rem;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.8rem;
+  line-height:2;
+  color:var(--muted);
+  overflow-x:auto;
+  white-space:pre;
+  margin-bottom:1rem;
+}
+body.light-theme .modal-arch{ background:rgba(0,0,0,.04); }
+
+/* ===================================================================
+   COMMAND PALETTE
+   =================================================================== */
+.cmd-palette{
+  position:fixed; inset:0;
+  z-index:40000;
+  display:none;
+  align-items:flex-start;
+  justify-content:center;
+  padding:10vh 1rem 2rem;
+  background:rgba(5,8,15,.85);
+  backdrop-filter:blur(12px);
+  opacity:0;
+  transition:opacity .25s ease;
+}
+.cmd-palette.show{ display:flex; opacity:1; }
+.cmd-palette-inner{
+  width:100%;
+  max-width:600px;
+  background:var(--bg2);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow:hidden;
+  box-shadow:0 40px 100px rgba(0,0,0,.6), 0 0 80px var(--shadow-accent);
+  transform:translateY(-20px) scale(.98);
+  transition:transform .3s cubic-bezier(.19,1,.22,1);
+}
+.cmd-palette.show .cmd-palette-inner{ transform:translateY(0) scale(1); }
+.cmd-input-wrap{
+  display:flex;
+  align-items:center;
+  gap:.8rem;
+  padding:1.1rem 1.3rem;
+  border-bottom:1px solid var(--border);
+  background:rgba(0,255,157,.03);
+}
+.cmd-icon{
+  font-family:'JetBrains Mono',monospace;
+  font-size:1rem;
+  color:var(--accent);
+  flex-shrink:0;
+}
+#cmdInput{
+  flex:1;
+  background:transparent;
+  border:none;
+  outline:none;
+  color:var(--fg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.95rem;
+  caret-color:var(--accent);
+}
+#cmdInput::placeholder{ color:var(--muted); opacity:.6; }
+.cmd-hint{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;
+  color:var(--muted);
+  padding:.2rem .5rem;
+  border:1px solid var(--border);
+  border-radius:4px;
+  background:rgba(0,255,157,.03);
+  letter-spacing:.1em;
+}
+.cmd-results{
+  max-height:50vh;
+  overflow-y:auto;
+  padding:.5rem;
+}
+.cmd-results::-webkit-scrollbar{ width:6px; }
+.cmd-results::-webkit-scrollbar-thumb{
+  background:var(--border);
+  border-radius:3px;
+}
+.cmd-result{
+  display:flex;
+  align-items:center;
+  gap:.9rem;
+  padding:.75rem .9rem;
+  border-radius:8px;
+  cursor:pointer;
+  transition:all .15s;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  color:var(--muted);
+}
+.cmd-result:hover,
+.cmd-result.selected{
+  background:rgba(0,255,157,.1);
+  color:var(--accent);
+}
+.cmd-result.selected{
+  box-shadow:inset 0 0 0 1px rgba(0,255,157,.3);
+}
+.cmd-result .cr-icon{
+  font-size:1.1rem;
+  width:24px;
+  text-align:center;
+  flex-shrink:0;
+}
+.cmd-result .cr-label{ flex:1; }
+.cmd-result .cr-category{
+  font-size:.7rem;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.cmd-result.selected .cr-category,
+.cmd-result:hover .cr-category{ color:var(--accent2); }
+.cmd-empty{
+  padding:2rem 1rem;
+  text-align:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  color:var(--muted);
+}
+.cmd-empty .icon{
+  font-size:2rem;
+  display:block;
+  margin-bottom:.5rem;
+  opacity:.4;
+}
+.cmd-footer{
+  display:flex;
+  gap:1.5rem;
+  padding:.7rem 1.3rem;
+  border-top:1px solid var(--border);
+  background:rgba(0,255,157,.02);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+  color:var(--muted);
+  letter-spacing:.05em;
+  flex-wrap:wrap;
+}
+.cmd-footer span{ display:inline-flex; align-items:center; gap:.35rem; }
+.cmd-footer kbd{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.65rem;
+  padding:.15rem .4rem;
+  border:1px solid var(--border);
+  border-radius:3px;
+  background:rgba(0,255,157,.04);
+  color:var(--accent);
+  min-width:18px;
+  text-align:center;
+}
+.cmd-result .match{
+  color:var(--accent);
+  font-weight:700;
+  text-decoration:underline;
+  text-decoration-color:var(--accent2);
+  text-underline-offset:2px;
+}
+
+/* ===================================================================
+   GITHUB STATS + CONTRIBUTION GRAPH
+   =================================================================== */
 .github-stats{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
@@ -723,7 +1289,39 @@ section{ padding:7rem 4rem; position:relative; }
   color:var(--muted);
   letter-spacing:.1em;
 }
+.gh-graph-wrap{
+  margin-top:2rem;
+  padding:1.5rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  overflow-x:auto;
+  text-align:center;
+  transition:all .3s;
+}
+.gh-graph-wrap:hover{
+  border-color:var(--accent);
+  box-shadow:0 20px 50px var(--shadow-accent);
+}
+.gh-graph-wrap img{
+  max-width:100%;
+  height:auto;
+  border-radius:8px;
+  display:block;
+  margin:0 auto;
+}
+.gh-graph-label{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;
+  color:var(--muted);
+  margin-bottom:1rem;
+  letter-spacing:.1em;
+}
+.gh-graph-label::before{ content:'// '; color:var(--accent); }
 
+/* ===================================================================
+   TIMELINE
+   =================================================================== */
 .timeline{
   position:relative;
   padding-left:3rem;
@@ -747,7 +1345,7 @@ section{ padding:7rem 4rem; position:relative; }
 .timeline-item:hover{
   transform:translateX(10px);
   border-color:var(--accent);
-  box-shadow:0 20px 60px rgba(0,255,157,.15);
+  box-shadow:0 20px 60px var(--shadow-accent);
 }
 .timeline-item::before{
   content:'';
@@ -782,6 +1380,7 @@ section{ padding:7rem 4rem; position:relative; }
   font-family:'Syne',sans-serif;
   font-size:1.2rem;
   font-weight:700;
+  color:var(--fg);
 }
 .timeline-role{
   font-family:'JetBrains Mono',monospace;
@@ -807,11 +1406,14 @@ section{ padding:7rem 4rem; position:relative; }
   margin-bottom:1rem;
 }
 .timeline-desc{
-  color:#b8c1cc;
+  color:var(--muted);
   font-size:.92rem;
   line-height:1.75;
 }
 
+/* ===================================================================
+   CERT + EDU
+   =================================================================== */
 .cert-card{
   padding:2rem;
   background:var(--card);
@@ -823,7 +1425,7 @@ section{ padding:7rem 4rem; position:relative; }
 }
 .cert-card:hover{
   border-color:var(--accent);
-  box-shadow:0 25px 60px rgba(0,255,157,.15);
+  box-shadow:0 25px 60px var(--shadow-accent);
   transform:translateY(-5px);
 }
 .cert-icon{
@@ -838,6 +1440,7 @@ section{ padding:7rem 4rem; position:relative; }
   font-family:'Syne',sans-serif;
   font-size:1.2rem;
   margin-bottom:.3rem;
+  color:var(--fg);
 }
 .cert-info .issuer{
   font-family:'JetBrains Mono',monospace;
@@ -850,7 +1453,6 @@ section{ padding:7rem 4rem; position:relative; }
   font-size:.75rem;
   color:var(--muted);
 }
-
 .edu-grid{
   display:grid;
   grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));
@@ -866,12 +1468,13 @@ section{ padding:7rem 4rem; position:relative; }
 .edu-card:hover{
   border-color:var(--accent);
   transform:translateY(-5px);
-  box-shadow:0 20px 50px rgba(0,255,157,.12);
+  box-shadow:0 20px 50px var(--shadow-accent);
 }
 .edu-card h3{
   font-family:'Syne',sans-serif;
   font-size:1.1rem;
   margin-bottom:.4rem;
+  color:var(--fg);
 }
 .edu-card .school{
   font-family:'JetBrains Mono',monospace;
@@ -885,6 +1488,141 @@ section{ padding:7rem 4rem; position:relative; }
   color:var(--muted);
 }
 
+/* ===================================================================
+   BLOG
+   =================================================================== */
+.blog-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+  gap:1.8rem;
+}
+.blog-card{
+  padding:1.8rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  transition:all .4s;
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+  text-decoration:none;
+  color:inherit;
+}
+.blog-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-6px);
+  box-shadow:0 25px 60px var(--shadow-accent);
+}
+.blog-tag{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.7rem;
+  color:var(--accent2);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+}
+.blog-card h4{
+  font-family:'Syne',sans-serif;
+  font-size:1.15rem;
+  font-weight:700;
+  color:var(--fg);
+  line-height:1.35;
+}
+.blog-card p{
+  font-size:.88rem;
+  color:var(--muted);
+  line-height:1.7;
+  flex-grow:1;
+}
+.blog-meta{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;
+  color:var(--muted);
+  padding-top:1rem;
+  border-top:1px dashed var(--border);
+}
+.blog-meta .read-more{
+  color:var(--accent);
+  transition:color .3s;
+}
+.blog-card:hover .blog-meta .read-more{ color:var(--accent2); }
+
+/* ===================================================================
+   TESTIMONIALS
+   =================================================================== */
+.testimonials-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));
+  gap:1.8rem;
+}
+.testimonial-card{
+  padding:1.8rem;
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  transition:all .4s;
+  position:relative;
+}
+.testimonial-card::before{
+  content:'"';
+  position:absolute;
+  top:.8rem; right:1.4rem;
+  font-family:'Syne',sans-serif;
+  font-size:4rem;
+  line-height:1;
+  color:var(--accent);
+  opacity:.15;
+}
+.testimonial-card:hover{
+  border-color:var(--accent);
+  transform:translateY(-6px);
+  box-shadow:0 25px 60px var(--shadow-accent);
+}
+.testimonial-text{
+  font-size:.92rem;
+  line-height:1.8;
+  color:var(--muted);
+  font-style:italic;
+  margin-bottom:1.5rem;
+}
+.testimonial-author{
+  display:flex;
+  align-items:center;
+  gap:1rem;
+  padding-top:1rem;
+  border-top:1px dashed var(--border);
+}
+.testimonial-avatar{
+  width:44px; height:44px;
+  border-radius:50%;
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-family:'Syne',sans-serif;
+  font-weight:800;
+  color:var(--bg);
+  font-size:.95rem;
+  flex-shrink:0;
+}
+.testimonial-name{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  color:var(--accent);
+  font-style:normal;
+}
+.testimonial-role{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.72rem;
+  color:var(--muted);
+  margin-top:.15rem;
+}
+
+/* ===================================================================
+   CONTACT + FORM
+   =================================================================== */
 .contact{ text-align:center; }
 .contact .section-label,
 .contact .section-title{
@@ -897,19 +1635,31 @@ section{ padding:7rem 4rem; position:relative; }
   font-size:1rem;
   font-family:'JetBrains Mono',monospace;
 }
+.contact-layout{
+  display:grid;
+  grid-template-columns:1fr 1.2fr;
+  gap:3rem;
+  align-items:start;
+  max-width:1100px;
+  margin:0 auto;
+  text-align:left;
+}
+.contact-left{
+  display:flex;
+  flex-direction:column;
+  gap:2rem;
+}
 .contact-box{
   display:inline-block;
-  padding:2.5rem 4rem;
+  padding:2rem 2.5rem;
   border:1px solid var(--border);
   border-radius:14px;
   background:var(--card);
-  backdrop-filter:blur(10px);
   transition:all .4s;
-  max-width:100%;
 }
 .contact-box:hover{
   border-color:var(--accent);
-  box-shadow:0 25px 60px rgba(0,255,157,.15);
+  box-shadow:0 25px 60px var(--shadow-accent);
 }
 .contact-box .prompt-line{
   font-family:'JetBrains Mono',monospace;
@@ -920,7 +1670,7 @@ section{ padding:7rem 4rem; position:relative; }
 .contact-box .prompt-line .user{ color:var(--accent); }
 .contact-box .email{
   font-family:'JetBrains Mono',monospace;
-  font-size:1.2rem;
+  font-size:1.05rem;
   color:var(--accent);
   text-decoration:none;
   display:inline-block;
@@ -935,15 +1685,14 @@ section{ padding:7rem 4rem; position:relative; }
   text-shadow:0 0 20px var(--accent2);
 }
 .availability{
-  display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap;
-  margin-top:2rem;
+  display:flex;
+  flex-direction:column;
+  gap:.8rem;
   font-family:'JetBrains Mono',monospace;
   font-size:.78rem;
   color:var(--muted);
 }
-.availability span{
-  display:inline-flex; align-items:center; gap:.4rem;
-}
+.availability span{ display:inline-flex; align-items:center; gap:.4rem; }
 .availability .avail-dot{
   width:6px; height:6px;
   border-radius:50%;
@@ -952,20 +1701,20 @@ section{ padding:7rem 4rem; position:relative; }
   flex-shrink:0;
 }
 .socials{
-  display:flex; justify-content:center;
-  gap:1rem; flex-wrap:wrap;
-  margin-top:2.5rem;
+  display:flex;
+  gap:.8rem;
+  flex-wrap:wrap;
 }
 .socials a, .socials button{
   color:var(--muted);
   text-decoration:none;
   font-family:'JetBrains Mono',monospace;
-  font-size:.82rem;
-  padding:.7rem 1.3rem;
+  font-size:.8rem;
+  padding:.6rem 1rem;
   border:1px solid var(--border);
   border-radius:6px;
   transition:all .3s;
-  display:inline-flex; align-items:center; gap:.5rem;
+  display:inline-flex; align-items:center; gap:.4rem;
   background:transparent;
   cursor:none;
   white-space:nowrap;
@@ -977,6 +1726,133 @@ section{ padding:7rem 4rem; position:relative; }
   transform:translateY(-3px);
 }
 
+/* Contact form */
+.contact-form{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:2rem;
+  position:relative;
+  overflow:hidden;
+  transition:all .4s;
+}
+.contact-form::before{
+  content:'';
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:3px;
+  background:linear-gradient(90deg,var(--accent),var(--accent2));
+}
+.contact-form:hover{
+  border-color:var(--accent);
+  box-shadow:0 25px 60px var(--shadow-accent);
+}
+.form-header{
+  padding-bottom:1rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:1.5rem;
+}
+.form-header .prompt-line{
+  font-family:'JetBrains Mono',monospace;
+  font-size:.8rem;
+  color:var(--muted);
+  display:flex;
+  align-items:center;
+  gap:.4rem;
+}
+.form-header .user{ color:var(--accent); }
+.form-group{ margin-bottom:1.3rem; position:relative; }
+.form-group label{
+  display:block;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.75rem;
+  color:var(--accent2);
+  margin-bottom:.4rem;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+.form-group label::before{ content:'// '; color:var(--muted); }
+.form-group input,
+.form-group textarea{
+  width:100%;
+  padding:.85rem 1rem;
+  background:rgba(10,14,26,.6);
+  border:1px solid var(--border);
+  border-radius:8px;
+  color:var(--fg);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.85rem;
+  outline:none;
+  transition:all .3s;
+  resize:vertical;
+  cursor:auto;
+}
+body.light-theme .form-group input,
+body.light-theme .form-group textarea{
+  background:#f0f3f7;
+}
+.form-group input::placeholder,
+.form-group textarea::placeholder{
+  color:var(--muted);
+  opacity:.5;
+}
+.form-group input:focus,
+.form-group textarea:focus{
+  border-color:var(--accent);
+  background:rgba(10,14,26,.9);
+  box-shadow:0 0 0 3px rgba(0,255,157,.1);
+}
+body.light-theme .form-group input:focus,
+body.light-theme .form-group textarea:focus{
+  background:#fff;
+}
+.form-group textarea{ min-height:120px; line-height:1.6; }
+
+.form-submit{
+  width:100%;
+  justify-content:center;
+  font-size:.95rem;
+  padding:1rem 1.8rem;
+  position:relative;
+  overflow:hidden;
+}
+.form-submit:disabled{
+  opacity:.6;
+  cursor:not-allowed !important;
+  transform:none !important;
+}
+
+.form-status{
+  margin-top:1rem;
+  padding:0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:.82rem;
+  border-radius:8px;
+  transition:all .3s;
+  max-height:0;
+  overflow:hidden;
+}
+.form-status.show{ padding:.9rem 1.1rem; max-height:200px; }
+.form-status.success{
+  background:rgba(0,255,157,.1);
+  border:1px solid var(--accent);
+  color:var(--accent);
+}
+.form-status.error{
+  background:rgba(255,107,107,.1);
+  border:1px solid var(--accent3);
+  color:var(--accent3);
+}
+.form-status.info{
+  background:rgba(0,184,255,.1);
+  border:1px solid var(--accent2);
+  color:var(--accent2);
+}
+.form-status .status-icon{ margin-right:.5rem; }
+
+/* ===================================================================
+   FOOTER
+   =================================================================== */
 .footer{
   text-align:center;
   padding:2rem;
@@ -986,21 +1862,78 @@ section{ padding:7rem 4rem; position:relative; }
   font-size:.8rem;
 }
 .footer .heart{ color:var(--accent3); }
+.footer .kbd-hint{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  margin-top:.8rem;
+  font-size:.72rem;
+  opacity:.7;
+}
+.footer .kbd-hint kbd{
+  padding:.15rem .4rem;
+  border:1px solid var(--border);
+  border-radius:3px;
+  background:rgba(0,255,157,.04);
+  color:var(--accent);
+  font-family:'JetBrains Mono',monospace;
+  font-size:.68rem;
+}
 
+/* ===================================================================
+   REVEAL
+   =================================================================== */
 .reveal{
   opacity:0;
   transform:translateY(50px);
   transition:opacity 1s ease, transform 1s cubic-bezier(.19,1,.22,1);
 }
-.reveal.active{
-  opacity:1;
-  transform:translateY(0);
+.reveal.active{ opacity:1; transform:translateY(0); }
+
+/* ===================================================================
+   404 PAGE OVERLAY
+   =================================================================== */
+.not-found-overlay{
+  position:fixed; inset:0;
+  background:rgba(5,8,15,.98);
+  z-index:60000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  font-family:'JetBrains Mono',monospace;
+  color:var(--accent);
+  text-align:center;
+  padding:2rem;
+}
+.not-found-overlay.show{ display:flex; }
+.not-found-overlay h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(4rem,12vw,9rem);
+  color:var(--accent3);
+  margin-bottom:1rem;
+  text-shadow:0 0 40px rgba(255,107,107,.5);
+  line-height:1;
+}
+.not-found-overlay .code-line{
+  font-size:.95rem;
+  color:var(--muted);
+  margin-bottom:.5rem;
+}
+.not-found-overlay .code-line .cmd{ color:var(--accent2); }
+.not-found-overlay .btn{
+  margin-top:2rem;
+  cursor:pointer;
 }
 
+/* ===================================================================
+   RESPONSIVE
+   =================================================================== */
 @media (max-width:1100px){
   .hero{ flex-direction:column; padding:6rem 2rem 3rem; }
   .hero-terminal{ max-width:100%; width:100%; }
   .term-body{ height:auto; min-height:340px; }
+  .contact-layout{ grid-template-columns:1fr; gap:2.5rem; }
 }
 @media (max-width:1000px){
   .stats-grid{ grid-template-columns:repeat(2,1fr); }
@@ -1015,18 +1948,29 @@ section{ padding:7rem 4rem; position:relative; }
   body{ cursor:auto; }
   .cursor,.cursor-follower{ display:none; }
   .contact-box{ padding:2rem 1.5rem; }
-  .contact-box .email{ font-size:.95rem; }
+  .contact-box .email{ font-size:.9rem; }
   .timeline{ padding-left:2rem; }
   .timeline-item::before,
   .timeline-item::after{ left:-2rem; }
   .stats-grid{ grid-template-columns:1fr 1fr; gap:1rem; }
   .cert-card{ flex-direction:column; text-align:center; gap:1rem; }
+  .modal-content{ padding:1.5rem; }
+  .modal-hero h2{ font-size:1.4rem; }
+  .project-modal{ padding:1rem; }
+  .project-modal, .project-modal *{ cursor:auto !important; }
+}
+@media (max-width:600px){
+  .cmd-palette{ padding:8vh .8rem 1rem; }
+  .cmd-footer{ font-size:.62rem; }
+  .cmd-footer span:nth-child(2),
+  .cmd-footer span:nth-child(3){ display:none; }
 }
 @media (max-width:500px){
   .stats-grid{ grid-template-columns:1fr; }
   .avatar-wrap{ flex-direction:column; align-items:center; }
   .avatar{ width:160px; height:160px; }
   .hero-title{ font-size:1.6rem; }
+  .socials{ justify-content:center; }
 }
 </style>
 </head>
@@ -1037,6 +1981,7 @@ section{ padding:7rem 4rem; position:relative; }
 <div class="orb orb1"></div>
 <div class="orb orb2"></div>
 
+<!-- PRELOADER -->
 <div class="preloader">
   <div class="terminal-loader">
     <div class="terminal-header">
@@ -1055,9 +2000,11 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </div>
 
+<!-- CUSTOM CURSOR -->
 <div class="cursor"></div>
 <div class="cursor-follower"></div>
 
+<!-- NAV -->
 <nav class="nav">
   <div class="logo">abhishek<span>@</span>devops</div>
   <ul class="nav-links">
@@ -1065,15 +2012,19 @@ section{ padding:7rem 4rem; position:relative; }
     <li><a href="#about">about</a></li>
     <li><a href="#skills">skills</a></li>
     <li><a href="#work">projects</a></li>
+    <li><a href="#blog">blog</a></li>
     <li><a href="#experience">experience</a></li>
     <li><a href="#" onclick="openResume(event)">resume</a></li>
     <li><a href="#contact">contact</a></li>
   </ul>
   <div class="nav-actions">
+    <button class="icon-btn" id="cmdToggle" title="Command Palette (Ctrl+K)">⌘</button>
+    <button class="icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
     <button class="icon-btn" id="motionToggle" title="Toggle Motion">⚡</button>
   </div>
 </nav>
 
+<!-- HERO -->
 <section id="home" class="hero">
   <div class="hero-content">
     <div class="hero-badge">
@@ -1104,14 +2055,14 @@ section{ padding:7rem 4rem; position:relative; }
         <div class="dot green"></div>
         <span>bash — 80×24</span>
       </div>
-      <div class="term-body">
-        <div class="term-line"><span class="user">abhishek@devops</span>:<span class="path">~</span>$ kubectl get pods -n opstrack</div>
+      <div class="term-body" id="termBody">
+        <div class="term-line"><span class="user">abhishek@devops</span><span class="ps">:</span><span class="path">~</span><span class="ps">$</span>&nbsp;<span class="cmd">kubectl get pods -n opstrack</span></div>
         <div class="term-line"><span class="ok">NAME                     READY   STATUS</span></div>
         <div class="term-line">api-server-7d4f9-x2k      1/1     Running</div>
         <div class="term-line">frontend-5c8b2-m9p        1/1     Running</div>
         <div class="term-line">postgres-0                1/1     Running</div>
         <div class="term-line">&nbsp;</div>
-        <div class="term-line"><span class="user">abhishek@devops</span>:<span class="path">~</span>$ docker ps --format "table {{.Names}}"</div>
+        <div class="term-line"><span class="user">abhishek@devops</span><span class="ps">:</span><span class="path">~</span><span class="ps">$</span>&nbsp;<span class="cmd">docker ps --format "table {{.Names}}"</span></div>
         <div class="term-line"><span class="ok">NAMES</span></div>
         <div class="term-line">opstrack-nginx</div>
         <div class="term-line">opstrack-api</div>
@@ -1120,15 +2071,22 @@ section{ padding:7rem 4rem; position:relative; }
         <div class="term-line">prometheus</div>
         <div class="term-line">grafana</div>
         <div class="term-line">&nbsp;</div>
-        <div class="term-line"><span class="user">abhishek@devops</span>:<span class="path">~</span>$ terraform apply <span class="ok">✓ applied</span></div>
+        <div class="term-line"><span class="user">abhishek@devops</span><span class="ps">:</span><span class="path">~</span><span class="ps">$</span>&nbsp;<span class="cmd">terraform apply</span> <span class="ok">✓ applied</span></div>
         <div class="term-line"><span class="warn">⚠ 12 resources created in 42s</span></div>
         <div class="term-line">&nbsp;</div>
-        <div class="term-line"><span class="user">abhishek@devops</span>:<span class="path">~</span>$ <span class="cursor-blink"></span></div>
+        <div class="term-line"><span class="comment"># Type 'help' to see available commands</span></div>
+        <div class="term-line">&nbsp;</div>
+        <div class="term-input-line">
+          <span class="prompt-text"><span class="user">abhishek@devops</span><span class="ps">:</span><span class="path">~</span><span class="ps">$</span></span>
+          <input type="text" id="termInput" autocomplete="off" spellcheck="false" />
+          <span class="cursor-blink"></span>
+        </div>
       </div>
     </div>
   </div>
 </section>
 
+<!-- ABOUT -->
 <section id="about" class="about">
   <div class="container">
     <p class="section-label">about_me</p>
@@ -1136,9 +2094,8 @@ section{ padding:7rem 4rem; position:relative; }
 
     <div class="about-grid">
       <div class="avatar-wrap">
-        <!-- PHOTO: apni image "profile.jpg" naam se same folder me rakho -->
         <div class="avatar">
-          <img src="profile.jpg" alt="Abhishek Singh Chauhan" onerror="this.style.display='none'; this.parentElement.innerHTML='<div style=&quot;width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:4.5rem;font-weight:800;color:#0a0e1a;&quot;>AS</div>'"/>
+          <img src="profile.jpg" alt="Abhishek Singh Chauhan" onerror="this.style.display='none'; this.parentElement.style.background='linear-gradient(135deg,#00ff9d,#00b8ff)'; this.parentElement.innerHTML+='<div style=&quot;position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:Syne,sans-serif;font-size:4rem;font-weight:800;color:#0a0e1a;&quot;>AS</div>'"/>
         </div>
         <div class="avatar-badge">DevOps Engineer</div>
       </div>
@@ -1147,6 +2104,28 @@ section{ padding:7rem 4rem; position:relative; }
         <p>I'm an <strong>IT professional with 2.5+ years of experience</strong> in IT support and infrastructure operations, currently transitioning into DevOps through structured learning and genuine hands-on projects.</p>
         <p>I specialize in <strong>CI/CD, containerization, cloud deployment, automation, and monitoring</strong> — with practical experience using Docker, Kubernetes, Jenkins, Terraform, Ansible, and AWS.</p>
         <p>My mission is simple: <strong>automate everything, break nothing</strong>. I build bridges between development and operations so teams can ship faster, safer, and more reliably.</p>
+      </div>
+    </div>
+
+    <!-- CURRENTLY WORKING ON -->
+    <div class="current-status">
+      <div class="cs-header">
+        <span class="live-dot"></span>
+        CURRENTLY WORKING ON
+      </div>
+      <div class="cs-grid">
+        <div class="cs-item">
+          <div class="cs-label">🚀 BUILDING</div>
+          <div class="cs-value">OpsTrack v2 — adding <span class="highlight">ArgoCD</span> for GitOps</div>
+        </div>
+        <div class="cs-item">
+          <div class="cs-label">📚 LEARNING</div>
+          <div class="cs-value"><span class="highlight">CKA</span> certification & AWS SAA</div>
+        </div>
+        <div class="cs-item">
+          <div class="cs-label">✍️ WRITING</div>
+          <div class="cs-value">Blog post on <span class="highlight">Kubernetes troubleshooting</span></div>
+        </div>
       </div>
     </div>
 
@@ -1171,6 +2150,7 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- SKILLS -->
 <section id="skills" class="skills">
   <div class="container">
     <p class="section-label">tech_stack</p>
@@ -1256,6 +2236,7 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- PROJECTS -->
 <section id="work" class="work">
   <div class="container">
     <p class="section-label">featured_projects</p>
@@ -1270,7 +2251,10 @@ section{ padding:7rem 4rem; position:relative; }
             <h3>OpsTrack — DevOps CI/CD & Cloud Platform</h3>
             <div class="project-type">Full-Stack DevOps · CI/CD · Kubernetes · AWS</div>
           </div>
-          <a href="https://github.com/abhisheksinghc871-rgb/opstrack" target="_blank" class="project-link">→ GitHub</a>
+          <div class="project-actions">
+            <button class="project-details-btn" onclick="openProjectModal('opstrack')">📁 View Details</button>
+            <a href="https://github.com/abhisheksinghc871-rgb/opstrack" target="_blank" class="project-link">→ GitHub</a>
+          </div>
         </div>
         <p class="project-desc">A production-style DevOps platform demonstrating the complete lifecycle — from containerization to CI/CD automation, cloud deployment, infrastructure as code, Kubernetes orchestration, and observability.</p>
         <div class="project-metrics">
@@ -1307,7 +2291,10 @@ section{ padding:7rem 4rem; position:relative; }
             <h3>NetScope Lite — Network Diagnostics Tool</h3>
             <div class="project-type">Python Automation · Networking · CLI Dashboard</div>
           </div>
-          <a href="https://github.com/abhisheksinghc871-rgb/netscope-lite" target="_blank" class="project-link">→ GitHub</a>
+          <div class="project-actions">
+            <button class="project-details-btn" onclick="openProjectModal('netscope')">📁 View Details</button>
+            <a href="https://github.com/abhisheksinghc871-rgb/netscope-lite" target="_blank" class="project-link">→ GitHub</a>
+          </div>
         </div>
         <p class="project-desc">A production-style network diagnostics CLI built with Python for DevOps & SysAdmin learning — covering ICMP, DNS, TCP, HTTP/HTTPS, and TLS layers in a single automated workflow.</p>
         <div class="project-metrics">
@@ -1344,7 +2331,10 @@ section{ padding:7rem 4rem; position:relative; }
             <h3>LinuxOps Health Center — Server Monitoring Toolkit</h3>
             <div class="project-type">Bash Automation · Linux Monitoring · AWS EC2</div>
           </div>
-          <a href="https://github.com/abhisheksinghc871-rgb/linuxops-health-center" target="_blank" class="project-link">→ GitHub</a>
+          <div class="project-actions">
+            <button class="project-details-btn" onclick="openProjectModal('linuxops')">📁 View Details</button>
+            <a href="https://github.com/abhisheksinghc871-rgb/linuxops-health-center" target="_blank" class="project-link">→ GitHub</a>
+          </div>
         </div>
         <p class="project-desc">A Linux server health monitoring, diagnostics & reporting toolkit built entirely in Bash — providing a single operational view with automated health-check execution and Markdown reports.</p>
         <div class="project-metrics">
@@ -1378,6 +2368,45 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- BLOG -->
+<section id="blog" class="blog">
+  <div class="container">
+    <p class="section-label">technical_writing</p>
+    <h2 class="section-title">Recent <span class="gradient-text">Articles</span></h2>
+
+    <div class="blog-grid">
+      <a href="#" class="blog-card">
+        <div class="blog-tag">CI/CD · JENKINS</div>
+        <h4>Building a Production CI/CD Pipeline with Jenkins Pipeline-as-Code</h4>
+        <p>How I automated 26 backend tests, Docker builds, Trivy vulnerability scanning, and deployment verification — reducing deployment time from 40min to 4min.</p>
+        <div class="blog-meta">
+          <span>6 min read</span>
+          <span class="read-more">Read →</span>
+        </div>
+      </a>
+      <a href="#" class="blog-card">
+        <div class="blog-tag">KUBERNETES · HELM</div>
+        <h4>Kubernetes Troubleshooting: Real Helm Rollback Experience</h4>
+        <p>A deep dive into how I debugged a failed Kubernetes deployment and used Helm rollback to recover production in under 60 seconds.</p>
+        <div class="blog-meta">
+          <span>5 min read</span>
+          <span class="read-more">Read →</span>
+        </div>
+      </a>
+      <a href="#" class="blog-card">
+        <div class="blog-tag">LINUX · BASH</div>
+        <h4>Building a Modular Server Health Monitoring Toolkit in Bash</h4>
+        <p>Why 10 small scripts beat 1 giant script — designing a threshold-based health evaluation system with automated Markdown reporting.</p>
+        <div class="blog-meta">
+          <span>4 min read</span>
+          <span class="read-more">Read →</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- GITHUB STATS -->
 <section id="github" class="github">
   <div class="container">
     <p class="section-label">github_activity</p>
@@ -1402,12 +2431,18 @@ section{ padding:7rem 4rem; position:relative; }
       </div>
     </div>
 
+    <div class="gh-graph-wrap">
+      <div class="gh-graph-label">contribution_graph</div>
+      <img src="https://ghchart.rshah.org/00ff9d/abhisheksinghc871-rgb" alt="GitHub Contribution Graph" loading="lazy"/>
+    </div>
+
     <div style="text-align:center; margin-top:2rem;">
       <a href="https://github.com/abhisheksinghc871-rgb" target="_blank" class="btn secondary">→ Visit GitHub Profile</a>
     </div>
   </div>
 </section>
 
+<!-- EXPERIENCE -->
 <section id="experience" class="experience">
   <div class="container">
     <p class="section-label">professional_experience</p>
@@ -1455,6 +2490,7 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- CERTIFICATIONS -->
 <section id="certifications" class="certs">
   <div class="container">
     <p class="section-label">certifications</p>
@@ -1471,6 +2507,7 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- EDUCATION -->
 <section id="education" class="education">
   <div class="container">
     <p class="section-label">education</p>
@@ -1496,49 +2533,451 @@ section{ padding:7rem 4rem; position:relative; }
   </div>
 </section>
 
+<!-- TESTIMONIALS -->
+<section id="testimonials" class="testimonials">
+  <div class="container">
+    <p class="section-label">testimonials</p>
+    <h2 class="section-title">What People <span class="gradient-text">Say</span></h2>
+
+    <div class="testimonials-grid">
+      <div class="testimonial-card">
+        <p class="testimonial-text">Abhishek managed our server infrastructure with great attention to detail. His troubleshooting skills and dedication to learning DevOps made him a valuable team member.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">IT</div>
+          <div>
+            <div class="testimonial-name">IT Manager</div>
+            <div class="testimonial-role">CMG Biotech</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">His hands-on projects show genuine understanding of CI/CD and Kubernetes — not just theoretical knowledge. A fast learner with a strong systems background.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">PW</div>
+          <div>
+            <div class="testimonial-name">Mentor</div>
+            <div class="testimonial-role">PWSkills</div>
+          </div>
+        </div>
+      </div>
+      <div class="testimonial-card">
+        <p class="testimonial-text">Reliable, punctual, and always willing to go the extra mile. Abhishek handled client support efficiently while managing multiple infrastructure tasks.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-avatar">AL</div>
+          <div>
+            <div class="testimonial-name">Team Lead</div>
+            <div class="testimonial-role">Analog Legalhub</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
 <section id="contact" class="contact">
   <div class="container">
     <p class="section-label">connect</p>
     <h2 class="section-title">Let's <span class="gradient-text">deploy</span> something together</h2>
     <p class="contact-desc">// Looking for a DevOps engineer? Let's talk.</p>
 
-    <div class="contact-box">
-      <div class="prompt-line">
-        <span class="user">recruiter@company</span>:~$ ping abhishek
+    <div class="contact-layout">
+      <div class="contact-left">
+        <div class="contact-box">
+          <div class="prompt-line">
+            <span class="user">recruiter@company</span>:~$ ping abhishek
+          </div>
+          <a href="mailto:abhisheksinghc871@gmail.com" class="email">abhisheksinghc871@gmail.com</a>
+        </div>
+
+        <div class="availability">
+          <span><span class="avail-dot"></span> Immediate Joiner</span>
+          <span><span class="avail-dot"></span> Open to Remote / Hybrid</span>
+          <span><span class="avail-dot"></span> Response within 24h</span>
+          <span><span class="avail-dot"></span> Ghaziabad, India</span>
+        </div>
+
+        <div class="socials">
+          <a href="https://github.com/abhisheksinghc871-rgb" target="_blank">→ github</a>
+          <a href="https://linkedin.com/in/abhishek-singh-chauhan-60b999323" target="_blank">→ linkedin</a>
+          <a href="tel:+918103421613">→ +91 8103421613</a>
+          <button onclick="openResume(event)">→ resume</button>
+        </div>
       </div>
-      <a href="mailto:abhisheksinghc871@gmail.com" class="email">abhisheksinghc871@gmail.com</a>
-    </div>
 
-    <div class="availability">
-      <span><span class="avail-dot"></span> Immediate Joiner</span>
-      <span><span class="avail-dot"></span> Open to Remote / Hybrid</span>
-      <span><span class="avail-dot"></span> Response within 24h</span>
-      <span><span class="avail-dot"></span> Ghaziabad, India</span>
-    </div>
+      <div class="contact-right">
+        <form class="contact-form" id="contactForm" action="https://formspree.io/f/xeaopwvd" method="POST">
+          <div class="form-header">
+            <span class="prompt-line"><span class="user">abhishek@portfolio</span>:~$ ./send_message.sh</span>
+          </div>
 
-    <div class="socials">
-      <a href="https://github.com/abhisheksinghc871-rgb" target="_blank">→ github</a>
-      <a href="https://linkedin.com/in/abhishek-singh-chauhan-60b999323" target="_blank">→ linkedin</a>
-      <a href="tel:+918103421613">→ +91 8103421613</a>
-      <button onclick="openResume(event)">→ resume</button>
+          <div class="form-group">
+            <label for="cf-name">Name</label>
+            <input type="text" id="cf-name" name="name" required placeholder="Your full name" />
+          </div>
+
+          <div class="form-group">
+            <label for="cf-email">Email</label>
+            <input type="email" id="cf-email" name="email" required placeholder="your@email.com" />
+          </div>
+
+          <div class="form-group">
+            <label for="cf-subject">Subject</label>
+            <input type="text" id="cf-subject" name="subject" required placeholder="What's this about?" />
+          </div>
+
+          <div class="form-group">
+            <label for="cf-message">Message</label>
+            <textarea id="cf-message" name="message" required rows="5" placeholder="Tell me about the opportunity..."></textarea>
+          </div>
+
+          <button type="submit" class="btn primary form-submit" id="formSubmitBtn">
+            <span class="btn-text">Send Message →</span>
+          </button>
+
+          <div class="form-status" id="formStatus"></div>
+        </form>
+      </div>
     </div>
   </div>
 </section>
 
+<!-- FOOTER -->
 <footer class="footer">
   <p>© 2025 Abhishek Singh Chauhan · Built with <span class="heart">♥</span> and way too much coffee</p>
+  <p class="kbd-hint">Pro tip: Press <kbd>Ctrl</kbd> <kbd>K</kbd> for quick navigation</p>
 </footer>
+
+<!-- PROJECT MODAL -->
+<div class="project-modal" id="projectModal">
+  <div class="project-modal-inner">
+    <div class="modal-toolbar">
+      <div class="modal-toolbar-title" id="modalTitle">project-details</div>
+      <div class="modal-toolbar-actions">
+        <a href="#" class="toolbar-btn" id="modalGithubBtn" target="_blank">→ GitHub</a>
+        <button class="toolbar-btn close-btn" onclick="closeProjectModal()">✕ Close (Esc)</button>
+      </div>
+    </div>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+
+<!-- COMMAND PALETTE -->
+<div class="cmd-palette" id="cmdPalette">
+  <div class="cmd-palette-inner">
+    <div class="cmd-input-wrap">
+      <span class="cmd-icon">⌘</span>
+      <input type="text" id="cmdInput" placeholder="Type a command or search..." autocomplete="off" spellcheck="false" />
+      <span class="cmd-hint">ESC</span>
+    </div>
+    <div class="cmd-results" id="cmdResults"></div>
+    <div class="cmd-footer">
+      <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+      <span><kbd>↵</kbd> select</span>
+      <span><kbd>esc</kbd> close</span>
+    </div>
+  </div>
+</div>
+
+<!-- 404 OVERLAY -->
+<div class="not-found-overlay" id="notFound">
+  <h1>404</h1>
+  <p class="code-line"><span class="cmd">$</span> kubectl get page</p>
+  <p class="code-line">Error from server (NotFound): pages "404" not found</p>
+  <button class="btn primary" onclick="document.getElementById('notFound').classList.remove('show')">← Go Back</button>
+</div>
 
 <script>
 /* =====================================================
-   RESUME — Embedded HTML string (self-contained)
+   PROJECT DATA
+   ===================================================== */
+const projectData = {
+  opstrack: {
+    title: 'OpsTrack — DevOps CI/CD & Cloud Platform',
+    subtitle: 'Full-Stack DevOps · CI/CD · Kubernetes · AWS · Observability',
+    github: 'https://github.com/abhisheksinghc871-rgb/opstrack',
+    tags: ['Docker', 'Jenkins', 'AWS EC2', 'Terraform', 'Ansible', 'Kubernetes', 'Helm', 'Prometheus', 'Grafana', 'Trivy'],
+    metrics: [
+      { value: '26+', label: 'AUTOMATED TESTS' },
+      { value: '5', label: 'STACKS DEPLOYED' },
+      { value: '100%', label: 'PIPELINE AUTOMATION' },
+      { value: '10+', label: 'DOCKER SERVICES' }
+    ],
+    problem: 'Modern DevOps teams struggle to demonstrate end-to-end capabilities: containerizing multi-service apps, automating CI/CD, provisioning infrastructure as code, orchestrating Kubernetes, and monitoring production systems — all in one cohesive project.',
+    solution: 'Built OpsTrack: a complete production-style DevOps platform covering the entire lifecycle. From local development with Docker Compose to cloud deployment on AWS EC2, infrastructure provisioning with Terraform, Kubernetes orchestration with Helm, and full observability with Prometheus + Grafana.',
+    highlights: [
+      'Containerized React/Vite frontend, FastAPI backend & PostgreSQL with Docker Compose, internal service networking, health checks & Nginx routing',
+      'Built Jenkins CI/CD pipeline using Pipeline-as-Code and GitHub SSH integration — automating 26 backend tests, Docker builds, Trivy vulnerability scanning & deployment verification',
+      'Deployed on AWS EC2 Ubuntu server with Docker, Jenkins, Nginx & Docker Compose; configured required security groups',
+      'Created and validated Terraform configuration for AWS EC2 infrastructure — including import/plan validation — plus Ansible playbooks for config verification & automated deployment',
+      'Deployed on Kubernetes (Minikube) with Deployments, Services, Secrets & health probes; scaled backend and packaged with Helm including rollback exercise',
+      'Instrumented FastAPI backend with Prometheus & created Grafana dashboards for CPU and memory monitoring'
+    ],
+    architecture: `+-----------------------------------------+
+|         Jenkins CI/CD Pipeline          |
+|   Git Push -> Build -> Test -> Scan ->  |
+|                Deploy                   |
++--------------------+--------------------+
+                     |
+                     v
++-----------------------------------------+
+|         Docker Container Stack          |
+|  Nginx -> FastAPI -> PostgreSQL         |
++--------------------+--------------------+
+                     |
+                     v
++-----------------------------------------+
+|       AWS EC2 / Kubernetes              |
+|  Terraform + Ansible + Helm             |
++--------------------+--------------------+
+                     |
+                     v
++-----------------------------------------+
+|    Prometheus + Grafana Monitoring      |
++-----------------------------------------+`,
+    screenshots: [
+      'screenshots/opstrack/1.jpg',
+      'screenshots/opstrack/2.jpg',
+      'screenshots/opstrack/3.jpg'
+    ],
+    screenshotLabels: ['Jenkins Pipeline', 'Grafana Dashboard', 'K8s Pods Running'],
+    learnings: [
+      'Real-world CI/CD is not just about automation — it is about reliability, security scanning, and rollback strategies',
+      'Terraform import is a game-changer when adopting IaC for existing infrastructure',
+      'Kubernetes health probes + Helm rollback = production-grade resilience',
+      'Observability is not optional — Prometheus + Grafana turns black boxes into dashboards'
+    ]
+  },
+  netscope: {
+    title: 'NetScope Lite — Network Diagnostics Tool',
+    subtitle: 'Python Automation · Networking · CLI Dashboard',
+    github: 'https://github.com/abhisheksinghc871-rgb/netscope-lite',
+    tags: ['Python 3.13', 'Networking', 'SSL/TLS', 'Socket', 'Rich', 'Automation'],
+    metrics: [
+      { value: '9', label: 'DIAGNOSTIC FEATURES' },
+      { value: '5', label: 'NETWORK LAYERS' },
+      { value: '100%', label: 'AUTO REPORTING' },
+      { value: '1', label: 'CLI COMMAND' }
+    ],
+    problem: 'Network troubleshooting typically requires multiple tools — ping, nslookup, telnet, curl, openssl — each with different syntax and output formats. DevOps engineers waste time switching between tools during incident response.',
+    solution: 'Built NetScope Lite — a single Python CLI that covers ICMP, DNS, TCP, HTTP/HTTPS, and TLS layers in one automated workflow with a professional terminal dashboard and automated Markdown reporting.',
+    highlights: [
+      'ICMP ping reachability check with latency measurement',
+      'DNS lookup with multiple record type support',
+      'TCP port scanner with timeout handling',
+      'HTTP/HTTPS status checker with server header detection',
+      'SSL certificate expiry checker with days-remaining calculation',
+      'Automated Markdown report generator for operational documentation',
+      'Professional terminal dashboard using Python rich library',
+      'Configurable target input for domain or IP',
+      'Clean error handling with clear diagnostic messages'
+    ],
+    architecture: `+-----------------------------------+
+|         User Input                |
+|   Domain or IP address            |
++----------------+------------------+
+                 |
+                 v
++-----------------------------------+
+|      Diagnostic Modules           |
+|  ICMP -> DNS -> TCP -> HTTP -> TLS|
++----------------+------------------+
+                 |
+                 v
++-----------------------------------+
+|      Rich Dashboard Output        |
+|  Colors | Tables | Icons          |
++----------------+------------------+
+                 |
+                 v
++-----------------------------------+
+|     Markdown Report Generator     |
+|   reports/report-<host>-<ts>.md   |
++-----------------------------------+`,
+    screenshots: [
+      'screenshots/netscope-lite/1.jpg',
+      'screenshots/netscope-lite/2.jpg',
+      'screenshots/netscope-lite/3.jpg'
+    ],
+    screenshotLabels: ['Terminal Dashboard', 'SSL Certificate Check', 'Report Output'],
+    learnings: [
+      'Python socket library gives low-level control but requires careful error handling',
+      'rich library transforms CLI tools from ugly to professional',
+      'Automated Markdown reports make CLI tools audit-friendly',
+      'SSL certificate validation involves more steps than most people realize'
+    ]
+  },
+  linuxops: {
+    title: 'LinuxOps Health Center — Server Monitoring Toolkit',
+    subtitle: 'Bash Automation · Linux Monitoring · AWS EC2',
+    github: 'https://github.com/abhisheksinghc871-rgb/linuxops-health-center',
+    tags: ['Bash', 'Linux', 'systemd', 'journalctl', 'AWS EC2', 'Automation', 'Reporting'],
+    metrics: [
+      { value: '6', label: 'HEALTH CATEGORIES' },
+      { value: '10', label: 'BASH SCRIPTS' },
+      { value: '3', label: 'STATUS LEVELS' },
+      { value: '100%', label: 'AUTOMATED' }
+    ],
+    problem: 'Linux server monitoring usually means running multiple commands manually — free, df, uptime, ps, systemctl, ip, ss, journalctl — and interpreting results on the fly. No unified view, no reports, no automation.',
+    solution: 'Built LinuxOps Health Center — a modular Bash toolkit that collects, evaluates, and reports on server health across 6 categories with OK/WARNING/CRITICAL thresholds, automated Markdown reports, and an automated health-check runner.',
+    highlights: [
+      'Monitors 6 areas: System, Resources, Processes, Services, Network & Logs',
+      'Threshold-based health evaluation: OK / WARNING / CRITICAL',
+      'Automated Markdown report generation with recommendations',
+      'Health-check runner with exit-code based failure detection (exit 0 / exit 1)',
+      'Tested on Ubuntu AWS EC2 instance',
+      'Uses real Linux tools: systemd, journalctl, iproute2, ss, free, df, uptime',
+      'Modular Bash script architecture (10 separate scripts)',
+      'Professional terminal dashboard combining all checks',
+      'Log analysis for system errors and SSH auth failures',
+      'Failed service detection via systemd'
+    ],
+    architecture: `+--------------------------------------+
+|         Linux Server                 |
++----------------+---------------------+
+                 |
+                 v
++--------------------------------------+
+|         Health Checks                |
+|  System | Resources | Processes      |
+|  Services | Network | Logs           |
++----------------+---------------------+
+                 |
+                 v
++--------------------------------------+
+|        Health Evaluation             |
+|   OK / WARNING / CRITICAL            |
++----------------+---------------------+
+                 |
+       +---------+---------+
+       v                   v
++-------------+    +--------------+
+|  Dashboard  |    |   Report     |
+|  Terminal   |    |  Markdown    |
++-------------+    +--------------+`,
+    screenshots: [
+      'screenshots/linuxops-health-center/1.jpg',
+      'screenshots/linuxops-health-center/2.jpg',
+      'screenshots/linuxops-health-center/3.jpg'
+    ],
+    screenshotLabels: ['Health Dashboard', 'Markdown Report', 'Log Analysis'],
+    learnings: [
+      'Bash scripting scales well when modular — 10 small scripts beat 1 giant script',
+      'Exit codes are the Unix way of communicating failure across processes',
+      'journalctl + grep is a powerful combo for incident investigation',
+      'Threshold-based health checks prevent alert fatigue'
+    ]
+  }
+};
+
+/* =====================================================
+   OPEN PROJECT MODAL
+   ===================================================== */
+function openProjectModal(projectId){
+  const data = projectData[projectId];
+  if (!data) return;
+
+  document.getElementById('modalTitle').textContent = projectId + '.project';
+  document.getElementById('modalGithubBtn').href = data.github;
+
+  let screenshotsHTML = '';
+  data.screenshots.forEach((src, i) => {
+    const label = data.screenshotLabels[i] || 'Screenshot';
+    screenshotsHTML += `
+      <div class="screenshot-item">
+        <img src="${src}" alt="${label}" onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('beforeend', '<div class=&quot;placeholder&quot;><span class=&quot;icon&quot;>🖼️</span><span>${label}</span><span style=&quot;font-size:0.7rem;opacity:0.6&quot;>${src}</span></div>')"/>
+      </div>
+    `;
+  });
+
+  let metricsHTML = '';
+  data.metrics.forEach(m => {
+    metricsHTML += `
+      <div class="modal-metric">
+        <div class="value">${m.value}</div>
+        <div class="label">${m.label}</div>
+      </div>
+    `;
+  });
+
+  let highlightsHTML = '';
+  data.highlights.forEach(h => {
+    highlightsHTML += `<li>${h}</li>`;
+  });
+
+  let learningsHTML = '';
+  data.learnings.forEach(l => {
+    learningsHTML += `<li>${l}</li>`;
+  });
+
+  let tagsHTML = '';
+  data.tags.forEach(t => {
+    tagsHTML += `<span>${t}</span>`;
+  });
+
+  const content = `
+    <div class="modal-hero">
+      <h2>${data.title}</h2>
+      <div class="modal-subtitle">${data.subtitle}</div>
+      <div class="modal-tags">${tagsHTML}</div>
+    </div>
+
+    <div class="modal-metrics-grid">${metricsHTML}</div>
+
+    <div class="modal-section">
+      <h3>Problem</h3>
+      <p>${data.problem}</p>
+    </div>
+
+    <div class="modal-section">
+      <h3>Solution</h3>
+      <p>${data.solution}</p>
+    </div>
+
+    <div class="modal-section">
+      <h3>Architecture</h3>
+      <div class="modal-arch">${data.architecture}</div>
+    </div>
+
+    <div class="modal-section">
+      <h3>What I Built</h3>
+      <ul>${highlightsHTML}</ul>
+    </div>
+
+    <div class="modal-section">
+      <h3>Screenshots</h3>
+      <div class="modal-screenshots">${screenshotsHTML}</div>
+    </div>
+
+    <div class="modal-section">
+      <h3>Key Learnings</h3>
+      <ul>${learningsHTML}</ul>
+    </div>
+  `;
+
+  document.getElementById('modalContent').innerHTML = content;
+  document.getElementById('projectModal').classList.add('show');
+  document.body.classList.add('modal-open');
+  setTimeout(() => {
+    document.getElementById('projectModal').scrollTop = 0;
+  }, 50);
+}
+
+function closeProjectModal(){
+  document.getElementById('projectModal').classList.remove('show');
+  if (!document.getElementById('cmdPalette').classList.contains('show')) {
+    document.body.classList.remove('modal-open');
+  }
+}
+
+/* =====================================================
+   RESUME MODAL
    ===================================================== */
 const RESUME_HTML = `<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Resume — Abhishek Singh Chauhan | DevOps Engineer</title>
+<title>Resume — Abhishek Singh Chauhan</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
 <style>
 * { margin:0; padding:0; box-sizing:border-box; }
@@ -1592,7 +3031,6 @@ body { background:#e8e8e8; font-family:'Space Grotesk',sans-serif; color:#1a1a1a
   .top-bar, .footer-note { display:none !important; }
   .resume-paper { box-shadow:none !important; border-radius:0 !important; max-width:100% !important; }
   .resume-header { background:#0a0e1a !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
-  .resume-project ul li::before { color:#00c97d !important; -webkit-print-color-adjust:exact; }
 }
 @media (max-width:700px){
   body{ padding:1rem .6rem; }
@@ -1740,9 +3178,6 @@ body { background:#e8e8e8; font-family:'Space Grotesk',sans-serif; color:#1a1a1a
 </body>
 </html>`;
 
-/* =====================================================
-   OPEN RESUME IN NEW TAB
-   ===================================================== */
 function openResume(event){
   if (event) event.preventDefault();
   const newWindow = window.open('', '_blank');
@@ -1790,7 +3225,7 @@ function animateFollower(){
 }
 animateFollower();
 
-document.querySelectorAll('a, button, .skill-tag, .stat-card, .project-card, .timeline-item, .edu-card, .cert-card, .github-stat').forEach(el => {
+document.querySelectorAll('a, button, .skill-tag, .stat-card, .project-card, .timeline-item, .edu-card, .cert-card, .github-stat, .project-details-btn, .blog-card, .testimonial-card, .cs-item').forEach(el => {
   el.addEventListener('mouseenter', () => follower.classList.add('hover'));
   el.addEventListener('mouseleave', () => follower.classList.remove('hover'));
 });
@@ -1799,7 +3234,7 @@ document.querySelectorAll('a, button, .skill-tag, .stat-card, .project-card, .ti
    SCROLL REVEAL
    ===================================================== */
 const revealEls = document.querySelectorAll(
-  '.section-title, .section-label, .about-text, .avatar-wrap, .skill-category, .stat-card, .project-card, .timeline-item, .cert-card, .edu-card, .github-stat, .contact-box, .socials, .contact-desc, .availability'
+  '.section-title, .section-label, .about-text, .avatar-wrap, .current-status, .skill-category, .stat-card, .project-card, .timeline-item, .cert-card, .edu-card, .github-stat, .gh-graph-wrap, .blog-card, .testimonial-card, .contact-box, .contact-form, .socials, .contact-desc, .availability'
 );
 revealEls.forEach(el => el.classList.add('reveal'));
 
@@ -1859,9 +3294,9 @@ window.addEventListener('resize', initMatrix);
 
 function drawMatrix(){
   if (document.body.classList.contains('reduced-motion')) return;
-  mCtx.fillStyle = 'rgba(10,14,26,.08)';
+  mCtx.fillStyle = document.body.classList.contains('light-theme') ? 'rgba(245,247,250,.08)' : 'rgba(10,14,26,.08)';
   mCtx.fillRect(0, 0, mW, mH);
-  mCtx.fillStyle = '#00ff9d';
+  mCtx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
   mCtx.font = fontSize + 'px JetBrains Mono, monospace';
   for (let i = 0; i < mYPos.length; i++){
     const ch = chars[Math.floor(Math.random() * chars.length)];
@@ -1876,20 +3311,634 @@ setInterval(drawMatrix, 55);
 /* =====================================================
    3D TILT ON TERMINAL
    ===================================================== */
-const term = document.querySelector('.terminal-window');
-if (term){
+const termWin = document.querySelector('.terminal-window');
+if (termWin){
   const heroEl = document.querySelector('.hero');
   if (heroEl){
     heroEl.addEventListener('mousemove', (e) => {
       const x = (e.clientX / window.innerWidth - 0.5) * 10;
       const y = (e.clientY / window.innerHeight - 0.5) * 10;
-      term.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
+      termWin.style.transform = `rotateY(${x}deg) rotateX(${-y}deg)`;
     });
     heroEl.addEventListener('mouseleave', () => {
-      term.style.transform = 'rotateY(-5deg) rotateX(2deg)';
+      termWin.style.transform = 'rotateY(-5deg) rotateX(2deg)';
     });
   }
 }
+
+/* =====================================================
+   INTERACTIVE TERMINAL
+   ===================================================== */
+(function(){
+  const termInput = document.getElementById('termInput');
+  const termBody = document.getElementById('termBody');
+  if (!termInput || !termBody) return;
+
+  const commandHistory = [];
+  let historyIndex = -1;
+
+  const commands = {
+    help: () => [
+      { text: 'Available commands:', type: 'ok' },
+      { text: '  whoami          → Show who I am' },
+      { text: '  about           → About me' },
+      { text: '  skills          → List my skills' },
+      { text: '  projects        → Go to projects section' },
+      { text: '  experience      → Work experience' },
+      { text: '  resume          → Open resume' },
+      { text: '  contact         → Contact info' },
+      { text: '  social          → Social links' },
+      { text: '  clear           → Clear terminal' },
+      { text: '  sudo hire-me    → 🎁 hidden' }
+    ],
+    whoami: () => [
+      { text: 'Abhishek Singh Chauhan | DevOps Engineer', type: 'ok' },
+      { text: '2.5+ years IT Infrastructure & Automation experience' }
+    ],
+    about: () => {
+      setTimeout(() => scrollToSection('#about'), 100);
+      return [{ text: 'Navigating to about section...', type: 'ok' }];
+    },
+    skills: () => [
+      { text: 'Cloud      : AWS, EC2, IAM, S3, VPC' },
+      { text: 'Containers : Docker, Kubernetes, Helm' },
+      { text: 'CI/CD      : Jenkins, GitHub Actions, Git' },
+      { text: 'IaC        : Terraform, Ansible, YAML, JSON' },
+      { text: 'Monitoring : Prometheus, Grafana' },
+      { text: 'Languages  : Python, Bash, Linux', type: 'ok' }
+    ],
+    projects: () => {
+      setTimeout(() => scrollToSection('#work'), 100);
+      return [
+        { text: 'Navigating to projects...', type: 'ok' },
+        { text: '→ OpsTrack, NetScope Lite, LinuxOps Health Center' }
+      ];
+    },
+    experience: () => {
+      setTimeout(() => scrollToSection('#experience'), 100);
+      return [{ text: 'Navigating to experience section...', type: 'ok' }];
+    },
+    resume: () => {
+      setTimeout(() => openResume({ preventDefault: () => {} }), 300);
+      return [{ text: 'Opening resume in new tab...', type: 'ok' }];
+    },
+    contact: () => {
+      setTimeout(() => scrollToSection('#contact'), 100);
+      return [
+        { text: 'Navigating to contact...', type: 'ok' },
+        { text: 'Email    : abhisheksinghc871@gmail.com' },
+        { text: 'Phone    : +91 8103421613' }
+      ];
+    },
+    social: () => [
+      { text: 'GitHub   : github.com/abhisheksinghc871-rgb' },
+      { text: 'LinkedIn : linkedin.com/in/abhishek-singh-chauhan-60b999323' }
+    ],
+    ls: () => [
+      { text: 'about/    skills/    projects/    blog/' },
+      { text: 'experience/    contact/    README.md' }
+    ],
+    pwd: () => [{ text: '/home/abhishek/portfolio' }],
+    date: () => [{ text: new Date().toString() }],
+    echo: (args) => [{ text: args.join(' ') || '' }],
+    sudo: (args) => {
+      if (args[0] === 'hire-me') {
+        setTimeout(() => showHireMeSurprise(), 400);
+        return [
+          { text: '[sudo] password for recruiter: ********', type: 'warn' },
+          { text: '✓ Access granted.', type: 'ok' },
+          { text: '🎉 Unlocking hire-me mode...', type: 'ok' }
+        ];
+      }
+      return [{ text: 'sudo: ' + (args.join(' ') || '') + ': command not found', type: 'err' }];
+    }
+  };
+
+  function scrollToSection(selector){
+    const target = document.querySelector(selector);
+    if (target) target.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function printLine(html, className){
+    const line = document.createElement('div');
+    line.className = 'term-line output-line ' + (className || '');
+    line.innerHTML = html;
+    termBody.insertBefore(line, termBody.querySelector('.term-input-line'));
+  }
+
+  function printCommand(cmd){
+    const line = document.createElement('div');
+    line.className = 'term-line history-line';
+    line.innerHTML = '<span class="user">abhishek@devops</span><span class="ps">:</span><span class="path">~</span><span class="ps">$</span>&nbsp;<span class="cmd-text">' + escapeHtml(cmd) + '</span>';
+    termBody.insertBefore(line, termBody.querySelector('.term-input-line'));
+  }
+
+  function executeCommand(raw){
+    const input = raw.trim();
+    if (!input) return;
+
+    commandHistory.push(input);
+    historyIndex = commandHistory.length;
+
+    printCommand(input);
+
+    const parts = input.split(/\s+/);
+    const cmd = parts[0].toLowerCase();
+    const args = parts.slice(1);
+
+    if (cmd === 'clear') {
+      const inputLine = termBody.querySelector('.term-input-line');
+      termBody.innerHTML = '';
+      termBody.appendChild(inputLine);
+      termInput.focus();
+      return;
+    }
+
+    if (commands[cmd]) {
+      const result = commands[cmd](args);
+      if (Array.isArray(result)) {
+        result.forEach(r => {
+          const cls = r.type === 'ok' ? 'ok' : r.type === 'warn' ? 'warn' : r.type === 'err' ? 'err' : '';
+          printLine(r.text, cls);
+        });
+      }
+    } else {
+      printLine('command not found: ' + escapeHtml(cmd) + '. Type "help" for list.', 'err');
+    }
+
+    termBody.scrollTop = termBody.scrollHeight;
+  }
+
+  termInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      const val = termInput.value;
+      termInput.value = '';
+      executeCommand(val);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        termInput.value = commandHistory[historyIndex] || '';
+        setTimeout(() => { termInput.selectionStart = termInput.selectionEnd = termInput.value.length; }, 0);
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        termInput.value = commandHistory[historyIndex] || '';
+      } else {
+        historyIndex = commandHistory.length;
+        termInput.value = '';
+      }
+    } else if (e.key === 'Tab') {
+      e.preventDefault();
+      const val = termInput.value.toLowerCase();
+      if (!val) return;
+      const matches = Object.keys(commands).filter(c => c.startsWith(val));
+      if (matches.length === 1) {
+        termInput.value = matches[0];
+        setTimeout(() => { termInput.selectionStart = termInput.selectionEnd = termInput.value.length; }, 0);
+      } else if (matches.length > 1) {
+        printLine('Suggestions: ' + matches.join('  '), 'ok');
+      }
+    } else if (e.key === 'l' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      executeCommand('clear');
+    }
+  });
+
+  termBody.addEventListener('click', (e) => {
+    if (e.target.tagName === 'A') return;
+    termInput.focus();
+  });
+
+  setTimeout(() => {
+    try { termInput.focus({ preventScroll: true }); } catch(err){}
+  }, 3000);
+})();
+
+/* =====================================================
+   SUDO HIRE-ME SURPRISE
+   ===================================================== */
+function showHireMeSurprise(){
+  const overlay = document.createElement('div');
+  overlay.style.cssText = `
+    position:fixed; inset:0;
+    background:rgba(5,8,15,.95);
+    backdrop-filter:blur(10px);
+    z-index:50000;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    font-family:'JetBrains Mono',monospace;
+    color:#00ff9d;
+    text-align:center;
+    padding:2rem;
+    cursor:auto !important;
+  `;
+  overlay.innerHTML = `
+    <div style="font-size:4rem;margin-bottom:1rem;">🎉</div>
+    <h1 style="font-family:'Syne',sans-serif;font-size:2rem;margin-bottom:1rem;color:#00ff9d;">Hire-Me Mode Unlocked</h1>
+    <p style="color:#b8c1cc;margin-bottom:.5rem;font-size:1rem;">$ whoami</p>
+    <p style="color:#fff;margin-bottom:1.5rem;">→ The DevOps engineer you've been looking for.</p>
+    <p style="color:#b8c1cc;margin-bottom:.5rem;font-size:1rem;">$ availability</p>
+    <p style="color:#fff;margin-bottom:2rem;">→ Immediate joiner, remote-friendly, ships fast 🚀</p>
+    <div style="display:flex;gap:1rem;flex-wrap:wrap;justify-content:center;margin-bottom:1rem;">
+      <a href="mailto:abhisheksinghc871@gmail.com" style="display:inline-block;padding:.8rem 1.5rem;background:linear-gradient(90deg,#00ff9d,#00b8ff);color:#000;border-radius:8px;text-decoration:none;font-weight:700;">📧 Email Me</a>
+      <a href="https://linkedin.com/in/abhishek-singh-chauhan-60b999323" target="_blank" style="display:inline-block;padding:.8rem 1.5rem;border:1px solid #00ff9d;color:#00ff9d;border-radius:8px;text-decoration:none;">→ LinkedIn</a>
+    </div>
+    <button onclick="this.parentElement.remove()" style="margin-top:1.5rem;padding:.5rem 1.2rem;background:transparent;border:1px solid #7d8590;color:#7d8590;border-radius:6px;cursor:pointer;font-family:inherit;font-size:.8rem;">Close</button>
+    <p style="margin-top:2rem;color:#7d8590;font-size:.75rem;">Hint: there are more commands. Try 'help'</p>
+  `;
+  document.body.appendChild(overlay);
+}
+
+/* =====================================================
+   CONTACT FORM
+   ===================================================== */
+(function(){
+  const form = document.getElementById('contactForm');
+  const statusEl = document.getElementById('formStatus');
+  const submitBtn = document.getElementById('formSubmitBtn');
+  if (!form) return;
+
+  function showStatus(type, message){
+    statusEl.className = 'form-status show ' + type;
+    const icons = { success: '✓', error: '✗', info: 'ℹ' };
+    statusEl.innerHTML = '<span class="status-icon">' + (icons[type] || '') + '</span>' + message;
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const name = form.querySelector('[name="name"]').value.trim();
+    const email = form.querySelector('[name="email"]').value.trim();
+    const subject = form.querySelector('[name="subject"]').value.trim();
+    const message = form.querySelector('[name="message"]').value.trim();
+
+    if (!name || !email || !subject || !message) {
+      showStatus('error', 'All fields are required.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showStatus('error', 'Please enter a valid email address.');
+      return;
+    }
+
+    submitBtn.disabled = true;
+    submitBtn.querySelector('.btn-text').textContent = 'Sending...';
+    showStatus('info', 'Sending your message...');
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch(form.action, {
+        method: 'POST',
+        body: formData,
+        headers: { 'Accept': 'application/json' }
+      });
+
+      if (response.ok) {
+        showStatus('success', 'Message sent successfully! I\'ll get back to you within 24 hours. ✓');
+        form.reset();
+        submitBtn.querySelector('.btn-text').textContent = 'Message Sent ✓';
+        setTimeout(() => {
+          submitBtn.querySelector('.btn-text').textContent = 'Send Message →';
+          submitBtn.disabled = false;
+          statusEl.classList.remove('show');
+        }, 4000);
+      } else {
+        const data = await response.json().catch(() => ({}));
+        const errMsg = data.errors ? data.errors.map(e => e.message).join(', ') : 'Something went wrong.';
+        showStatus('error', 'Failed: ' + errMsg + ' Please try again or email me directly.');
+        submitBtn.querySelector('.btn-text').textContent = 'Send Message →';
+        submitBtn.disabled = false;
+      }
+    } catch (err) {
+      showStatus('error', 'Network error. Please check connection or email me directly.');
+      submitBtn.querySelector('.btn-text').textContent = 'Send Message →';
+      submitBtn.disabled = false;
+    }
+  });
+})();
+
+/* =====================================================
+   COMMAND PALETTE (Ctrl+K)
+   ===================================================== */
+(function(){
+  const palette = document.getElementById('cmdPalette');
+  const input = document.getElementById('cmdInput');
+  const results = document.getElementById('cmdResults');
+  const cmdToggle = document.getElementById('cmdToggle');
+  if (!palette || !input || !results) return;
+
+  const items = [
+    { id: 'home', icon: '🏠', label: 'Go to Home', category: 'Navigate', action: () => goTo('#home'), keywords: 'home start top' },
+    { id: 'about', icon: '👤', label: 'Go to About', category: 'Navigate', action: () => goTo('#about'), keywords: 'about me profile bio' },
+    { id: 'skills', icon: '🛠️', label: 'Go to Skills', category: 'Navigate', action: () => goTo('#skills'), keywords: 'skills tech stack tools' },
+    { id: 'projects', icon: '🚀', label: 'Go to Projects', category: 'Navigate', action: () => goTo('#work'), keywords: 'projects work portfolio showcase' },
+    { id: 'blog', icon: '✍️', label: 'Go to Blog', category: 'Navigate', action: () => goTo('#blog'), keywords: 'blog articles writing' },
+    { id: 'experience', icon: '💼', label: 'Go to Experience', category: 'Navigate', action: () => goTo('#experience'), keywords: 'experience work job career' },
+    { id: 'github', icon: '📊', label: 'Go to GitHub Stats', category: 'Navigate', action: () => goTo('#github'), keywords: 'github stats repositories' },
+    { id: 'contact', icon: '📧', label: 'Go to Contact', category: 'Navigate', action: () => goTo('#contact'), keywords: 'contact email reach hire' },
+    { id: 'opstrack', icon: '📁', label: 'View OpsTrack project', category: 'Projects', action: () => { closePalette(); setTimeout(() => openProjectModal('opstrack'), 200); }, keywords: 'opstrack devops cicd kubernetes' },
+    { id: 'netscope', icon: '📁', label: 'View NetScope Lite project', category: 'Projects', action: () => { closePalette(); setTimeout(() => openProjectModal('netscope'), 200); }, keywords: 'netscope network diagnostics python' },
+    { id: 'linuxops', icon: '📁', label: 'View LinuxOps Health Center', category: 'Projects', action: () => { closePalette(); setTimeout(() => openProjectModal('linuxops'), 200); }, keywords: 'linuxops linux bash monitoring' },
+    { id: 'resume', icon: '📄', label: 'Open Resume', category: 'Actions', action: () => { closePalette(); setTimeout(() => openResume({ preventDefault: () => {} }), 200); }, keywords: 'resume cv pdf download' },
+    { id: 'email', icon: '✉️', label: 'Copy Email Address', category: 'Actions', action: () => copyEmail(), keywords: 'email copy mail contact' },
+    { id: 'linkedin', icon: '💼', label: 'Open LinkedIn', category: 'Actions', action: () => window.open('https://linkedin.com/in/abhishek-singh-chauhan-60b999323', '_blank'), keywords: 'linkedin social' },
+    { id: 'github-profile', icon: '🐙', label: 'Open GitHub Profile', category: 'Actions', action: () => window.open('https://github.com/abhisheksinghc871-rgb', '_blank'), keywords: 'github profile code' },
+    { id: 'theme', icon: '🌗', label: 'Toggle Light/Dark Theme', category: 'Settings', action: () => toggleTheme(), keywords: 'theme dark light mode' },
+    { id: 'motion', icon: '⚡', label: 'Toggle Motion', category: 'Settings', action: () => toggleMotion(), keywords: 'motion animation reduce' },
+    { id: 'terminal', icon: '⌨️', label: 'Focus Terminal', category: 'Actions', action: () => { closePalette(); goTo('#home'); setTimeout(() => { const t = document.getElementById('termInput'); if (t) t.focus(); }, 400); }, keywords: 'terminal shell command' },
+  ];
+
+  let filtered = items.slice();
+  let selectedIndex = 0;
+
+  function goTo(selector){
+    closePalette();
+    setTimeout(() => {
+      const el = document.querySelector(selector);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    }, 200);
+  }
+
+  function copyEmail(){
+    const email = 'abhisheksinghc871@gmail.com';
+    if (navigator.clipboard) {
+      navigator.clipboard.writeText(email).then(() => {
+        closePalette();
+        showToast('Email copied: ' + email, 'success');
+      }).catch(() => fallbackCopy(email));
+    } else {
+      fallbackCopy(email);
+    }
+  }
+
+  function fallbackCopy(text){
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); showToast('Email copied: ' + text, 'success'); }
+    catch(e){ showToast('Copy failed: ' + text, 'error'); }
+    document.body.removeChild(ta);
+    closePalette();
+  }
+
+  function toggleTheme(){
+    closePalette();
+    const btn = document.getElementById('themeToggle');
+    document.body.classList.toggle('light-theme');
+    const isLight = document.body.classList.contains('light-theme');
+    if (btn) btn.textContent = isLight ? '☀️' : '🌙';
+    try { localStorage.setItem('portfolio-theme', isLight ? 'light' : 'dark'); } catch(e){}
+    showToast(isLight ? 'Light theme ON' : 'Dark theme ON', 'info');
+  }
+
+  function toggleMotion(){
+    closePalette();
+    const btn = document.getElementById('motionToggle');
+    document.body.classList.toggle('reduced-motion');
+    if (btn) btn.textContent = document.body.classList.contains('reduced-motion') ? '🐢' : '⚡';
+    showToast(document.body.classList.contains('reduced-motion') ? 'Reduced motion ON' : 'Motion ON', 'info');
+  }
+
+  function showToast(message, type){
+    const existing = document.getElementById('globalToast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.id = 'globalToast';
+    toast.textContent = message;
+    const color = type === 'success' ? '#00ff9d' : type === 'error' ? '#ff6b6b' : '#00b8ff';
+    toast.style.cssText = `
+      position:fixed;
+      bottom:2rem; left:50%;
+      transform:translateX(-50%) translateY(20px);
+      padding:.9rem 1.4rem;
+      background:rgba(15,21,36,.98);
+      border:1px solid ${color};
+      color:${color};
+      font-family:'JetBrains Mono',monospace;
+      font-size:.82rem;
+      border-radius:10px;
+      z-index:60000;
+      box-shadow:0 20px 60px rgba(0,0,0,.6), 0 0 40px ${color}33;
+      opacity:0;
+      transition:all .3s ease;
+      max-width:90vw;
+      text-align:center;
+      pointer-events:none;
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateX(-50%) translateY(20px)';
+      setTimeout(() => toast.remove(), 300);
+    }, 2500);
+  }
+
+  function fuzzyMatch(text, query){
+    text = text.toLowerCase();
+    query = query.toLowerCase();
+    if (!query) return { matches: true, positions: [] };
+
+    let positions = [];
+    let qi = 0;
+    for (let i = 0; i < text.length && qi < query.length; i++){
+      if (text[i] === query[qi]){
+        positions.push(i);
+        qi++;
+      }
+    }
+    return { matches: qi === query.length, positions };
+  }
+
+  function highlightMatch(text, positions){
+    if (!positions.length) return text;
+    const posSet = new Set(positions);
+    return text.split('').map((ch, i) =>
+      posSet.has(i) ? '<span class="match">' + ch + '</span>' : ch
+    ).join('');
+  }
+
+  function renderResults(query){
+    const q = query.trim();
+
+    filtered = items.map(item => {
+      const labelMatch = fuzzyMatch(item.label, q);
+      const kwMatch = fuzzyMatch(item.keywords, q);
+      const catMatch = fuzzyMatch(item.category, q);
+
+      let score = 0;
+      let labelPositions = [];
+      if (!q) { score = 100; }
+      else if (labelMatch.matches) { score = 100; labelPositions = labelMatch.positions; }
+      else if (kwMatch.matches) { score = 50; }
+      else if (catMatch.matches) { score = 20; }
+      else return null;
+
+      return { item, score, labelPositions };
+    }).filter(Boolean).sort((a,b) => b.score - a.score);
+
+    if (filtered.length === 0){
+      results.innerHTML = '<div class="cmd-empty"><span class="icon">🔍</span>No commands match "' + escapeHtml(q) + '"</div>';
+      return;
+    }
+
+    results.innerHTML = filtered.map((f, i) => {
+      const it = f.item;
+      const labelHtml = highlightMatch(it.label, f.labelPositions);
+      return '<div class="cmd-result' + (i === selectedIndex ? ' selected' : '') + '" data-index="' + i + '">' +
+        '<span class="cr-icon">' + it.icon + '</span>' +
+        '<span class="cr-label">' + labelHtml + '</span>' +
+        '<span class="cr-category">' + it.category + '</span>' +
+      '</div>';
+    }).join('');
+
+    results.querySelectorAll('.cmd-result').forEach(el => {
+      el.addEventListener('click', () => executeItem(+el.dataset.index));
+      el.addEventListener('mouseenter', () => {
+        selectedIndex = +el.dataset.index;
+        updateSelection();
+      });
+    });
+  }
+
+  function updateSelection(){
+    const all = results.querySelectorAll('.cmd-result');
+    all.forEach((el, i) => el.classList.toggle('selected', i === selectedIndex));
+    const sel = all[selectedIndex];
+    if (sel) sel.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function executeItem(idx){
+    const f = filtered[idx];
+    if (!f) return;
+    f.item.action();
+  }
+
+  function escapeHtml(str){
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function openPalette(){
+    palette.classList.add('show');
+    document.body.classList.add('modal-open');
+    input.value = '';
+    selectedIndex = 0;
+    renderResults('');
+    setTimeout(() => input.focus(), 50);
+  }
+
+  function closePalette(){
+    palette.classList.remove('show');
+    if (!document.getElementById('projectModal').classList.contains('show')) {
+      document.body.classList.remove('modal-open');
+    }
+  }
+
+  document.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'k'){
+      e.preventDefault();
+      if (palette.classList.contains('show')) closePalette();
+      else openPalette();
+      return;
+    }
+
+    if (e.key === 'Escape'){
+      if (palette.classList.contains('show')){
+        e.preventDefault();
+        closePalette();
+        return;
+      }
+      if (document.getElementById('projectModal').classList.contains('show')){
+        e.preventDefault();
+        closeProjectModal();
+        return;
+      }
+    }
+
+    if (!palette.classList.contains('show')) return;
+
+    if (e.key === 'ArrowDown'){
+      e.preventDefault();
+      if (selectedIndex < filtered.length - 1){
+        selectedIndex++;
+        updateSelection();
+      }
+    } else if (e.key === 'ArrowUp'){
+      e.preventDefault();
+      if (selectedIndex > 0){
+        selectedIndex--;
+        updateSelection();
+      }
+    } else if (e.key === 'Enter'){
+      e.preventDefault();
+      executeItem(selectedIndex);
+    }
+  });
+
+  input.addEventListener('input', () => {
+    selectedIndex = 0;
+    renderResults(input.value);
+  });
+
+  if (cmdToggle){
+    cmdToggle.addEventListener('click', openPalette);
+  }
+
+  palette.addEventListener('click', (e) => {
+    if (e.target === palette) closePalette();
+  });
+
+  // Expose for external use
+  window.__openPalette = openPalette;
+})();
+
+/* =====================================================
+   THEME TOGGLE
+   ===================================================== */
+document.getElementById('themeToggle').addEventListener('click', () => {
+  document.body.classList.toggle('light-theme');
+  const isLight = document.body.classList.contains('light-theme');
+  document.getElementById('themeToggle').textContent = isLight ? '☀️' : '🌙';
+  try { localStorage.setItem('portfolio-theme', isLight ? 'light' : 'dark'); } catch(e){}
+});
+
+// Load saved theme
+try {
+  const saved = localStorage.getItem('portfolio-theme');
+  if (saved === 'light') {
+    document.body.classList.add('light-theme');
+    const btn = document.getElementById('themeToggle');
+    if (btn) btn.textContent = '☀️';
+  }
+} catch(e){}
+
+/* =====================================================
+   MOTION TOGGLE
+   ===================================================== */
+document.getElementById('motionToggle').addEventListener('click', () => {
+  document.body.classList.toggle('reduced-motion');
+  const btn = document.getElementById('motionToggle');
+  btn.textContent = document.body.classList.contains('reduced-motion') ? '🐢' : '⚡';
+});
 
 /* =====================================================
    GITHUB API
@@ -1922,27 +3971,25 @@ fetch('https://api.github.com/users/abhisheksinghc871-rgb/repos?per_page=100')
   });
 
 /* =====================================================
-   MOTION TOGGLE
-   ===================================================== */
-document.getElementById('motionToggle').addEventListener('click', () => {
-  document.body.classList.toggle('reduced-motion');
-  const btn = document.getElementById('motionToggle');
-  btn.textContent = document.body.classList.contains('reduced-motion') ? '🐢' : '⚡';
-});
-
-/* =====================================================
    SMOOTH SCROLL
    ===================================================== */
 document.querySelectorAll('.nav-links a').forEach(a => {
   a.addEventListener('click', (e) => {
     const href = a.getAttribute('href');
-    if (href.startsWith('#')) {
+    if (href && href.startsWith('#')) {
       e.preventDefault();
       const target = document.querySelector(href);
       if (target) target.scrollIntoView({ behavior: 'smooth' });
     }
   });
 });
+
+/* =====================================================
+   404 SHOW (if URL has #404)
+   ===================================================== */
+if (window.location.hash === '#404') {
+  document.getElementById('notFound').classList.add('show');
+}
 </script>
 </body>
 </html>
