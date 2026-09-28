@@ -2995,7 +2995,20 @@ body { background:#e8e8e8; font-family:'Space Grotesk',sans-serif; color:#1a1a1a
 .resume-header h1{ font-family:'Syne',sans-serif; font-size:2.2rem; font-weight:800; margin-bottom:.4rem; }
 .resume-header .role{ font-family:'JetBrains Mono',monospace; font-size:.95rem; color:#00ff9d; margin-bottom:1.2rem; letter-spacing:.05em; }
 .resume-contact{ display:flex; flex-wrap:wrap; gap:.6rem 1.5rem; font-family:'JetBrains Mono',monospace; font-size:.78rem; color:#b8c1cc; }
-.resume-contact span{ display:inline-flex; align-items:center; gap:.4rem; word-break:break-all; }
+.resume-contact span,
+.resume-contact a{
+  display:inline-flex;
+  align-items:center;
+  gap:.4rem;
+  word-break:break-all;
+  text-decoration:none;
+  color:#b8c1cc;
+  transition:color .2s;
+}
+.resume-contact a:hover{
+  color:#00ff9d;
+  text-decoration:underline;
+}
 .resume-body{ padding:2rem 2.5rem 2.5rem; }
 .resume-section-block{ margin-bottom:1.8rem; }
 .resume-section-block:last-child{ margin-bottom:0; }
@@ -3055,12 +3068,13 @@ body { background:#e8e8e8; font-family:'Space Grotesk',sans-serif; color:#1a1a1a
     <h1>Abhishek Singh Chauhan</h1>
     <div class="role">DevOps Engineer | Cloud & Automation</div>
     <div class="resume-contact">
-      <span>📞 +91 8103421613</span>
-      <span>✉️ abhisheksinghc871@gmail.com</span>
-      <span>📍 Ghaziabad, Uttar Pradesh</span>
-      <span>🔗 linkedin.com/in/abhishek-singh-chauhan-60b999323</span>
-      <span>💻 github.com/abhisheksinghc871-rgb</span>
-    </div>
+  <a href="tel:+918103421613">📞 +91 8103421613</a>
+  <a href="mailto:abhisheksinghc871@gmail.com">✉️ abhisheksinghc871@gmail.com</a>
+  <span>📍 Ghaziabad, Uttar Pradesh</span>
+  <a href="https://linkedin.com/in/abhishek-singh-chauhan-60b999323" target="_blank">🔗 linkedin.com/in/abhishek-singh-chauhan-60b999323</a>
+  <a href="https://github.com/abhisheksinghc871-rgb" target="_blank">💻 github.com/abhisheksinghc871-rgb</a>
+  <a href="https://abhishek-portfolio-one-tan.vercel.app/" target="_blank">🌐 abhishek-portfolio-one-tan.vercel.app</a>
+</div>
   </div>
   <div class="resume-body">
     <div class="resume-section-block">
